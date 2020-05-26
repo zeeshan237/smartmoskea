@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:smart_moskea/pages/BeforeLoggedInMainScreen.dart';
 import 'package:smart_moskea/ui/login_page.dart';
 
 class AuthServices {
@@ -10,7 +11,7 @@ class AuthServices {
     //FirebaseUser user = FirebaseAuth.instance.currentUser;
     //print('$user');
     runApp(new MaterialApp(
-      home: new LoginPage(),
+      home: new BeforeLoggedInMainScreen(),
     ));
   }
 

@@ -3,8 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
-import 'package:dbcrypt/dbcrypt.dart';
-import 'package:firebase_database/firebase_database.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,10 +13,6 @@ import 'package:smart_moskea/pages/loggedInMainScreen.dart';
 import 'package:smart_moskea/style/theme.dart' as Theme;
 import 'package:smart_moskea/utils/bubble_indication_painter.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:smart_moskea/requests/authServices.dart';
-import 'package:smart_moskea/pages/qibla_direction.dart';
-
-import '../pages/BeforeLoggedInMainScreen.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -28,9 +23,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
-  final FirebaseAuth auth = FirebaseAuth.instance;
-  String errorMessage = '';
-
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   final FocusNode myFocusNodeEmailLogin = FocusNode();
@@ -200,114 +192,6 @@ class _LoginPageState extends State<LoginPage>
       viewImamVisible = false;
     });
   }
-
-//signup using email password
-
-  //FirebaseAuth mAuth;
-  Future<void> signUpWithEmailPassword(context) async {
-    try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: signupEmailController.text,
-          password: signupPasswordController.text);
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              content: Text("Success signup Sucessfully"),
-            );
-          });
-
-      // user = await mAuth.createUserWithEmailAndPassword(
-      //     email: loginEmailController.text, password: loginPasswordController.text);
-    } catch (e) {
-      print(e.message);
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              content: Text(e.message),
-            );
-          });
-    }
-  }
-
-//Sign In using email password
-
-  Future<void> signInWithEmailPassword(context) async {
-    try {
-      final currentUser = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: loginEmailController.text,
-              password: loginPasswordController.text);
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => LoggedInMainScreen()));
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              content: Text("Success LOGIN Sucessfully"),
-            );
-          });
-
-      // user = await mAuth.createUserWithEmailAndPassword(
-      //     email: loginEmailController.text, password: loginPasswordController.text);
-    } catch (e) {
-      print(e.message);
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => BeforeLoggedInMainScreen()));
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              content: Text(e.message),
-            );
-          });
-    }
-  }
-
-  Future<FirebaseUser> signIn(String email, String password) async {
-    try {
-      FirebaseUser user = await auth.signInWithEmailAndPassword(
-          email: email, password: password);
-
-      assert(user != null);
-      assert(await user.getIdToken() != null);
-
-      final FirebaseUser currentUser = await auth.currentUser();
-      assert(user.uid == currentUser.uid);
-      return user;
-    } catch (e) {
-      handleError(e);
-      return null;
-    }
-  }
-
-// Handle Error in Email/Password
-  handleError(PlatformException error) {
-    print(error);
-    switch (error.code) {
-      case 'ERROR_USER_NOT_FOUND':
-        setState(() {
-          errorMessage = 'User Not Found!!!';
-        });
-        break;
-      case 'ERROR_WRONG_PASSWORD':
-        setState(() {
-          errorMessage = 'Wrong Password!!!';
-        });
-        break;
-    }
-  }
-  // Sign Out
-
-  // void signOut() {
-  //   FirebaseAuth.instance.signOut();
-  //   //FirebaseUser user = FirebaseAuth.instance.currentUser;
-  //   //print('$user');
-  //   runApp(new MaterialApp(
-  //     home: new LoginPage(),
-  //   ));
-  // }
 
   // final DatabaseReference database = FirebaseDatabase.instance.reference().child("users");
 
@@ -734,7 +618,7 @@ class _LoginPageState extends State<LoginPage>
                                 color: Colors.black,
                                 size: 22.0,
                               ),
-                              hintText: "Phone Number",
+                              hintText: "Email",
                               hintStyle: TextStyle(
                                   fontFamily: "WorkSansSemiBold",
                                   fontSize: 17.0),
@@ -968,10 +852,10 @@ class _LoginPageState extends State<LoginPage>
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               icon: Icon(
-                                FontAwesomeIcons.phoneAlt,
+                                FontAwesomeIcons.envelope,
                                 color: Colors.black,
                               ),
-                              hintText: "+923xxxxxxxxxxx",
+                              hintText: "abc@gmail.com",
                               hintStyle: TextStyle(
                                   fontFamily: "WorkSansSemiBold",
                                   fontSize: 16.0),
@@ -1266,4 +1150,81 @@ class _LoginPageState extends State<LoginPage>
       _obscureTextSignupConfirm = !_obscureTextSignupConfirm;
     });
   }
+
+  // Signup / Login Using Email Address Code Functions
+
+  //signup using email password
+
+  //FirebaseAuth mAuth;
+  Future<void> signUpWithEmailPassword(context) async {
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: signupEmailController.text,
+          password: signupPasswordController.text);
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              content: Text("Success signup Sucessfully"),
+            );
+          });
+
+      // user = await mAuth.createUserWithEmailAndPassword(
+      //     email: loginEmailController.text, password: loginPasswordController.text);
+    } catch (e) {
+      print(e.message);
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              content: Text(e.message),
+            );
+          });
+    }
+  }
+
+//Sign In using email password
+
+  Future<void> signInWithEmailPassword(context) async {
+    try {
+      final currentUser = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+              email: loginEmailController.text,
+              password: loginPasswordController.text);
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => LoggedInMainScreen()));
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              content: Text("Success LOGIN Sucessfully"),
+            );
+          });
+
+      // user = await mAuth.createUserWithEmailAndPassword(
+      //     email: loginEmailController.text, password: loginPasswordController.text);
+    } catch (e) {
+      print(e.message);
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => BeforeLoggedInMainScreen()));
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              content: Text(e.message),
+            );
+          });
+    }
+  }
+
+  // Sign Out
+
+  // void signOut() {
+  //   FirebaseAuth.instance.signOut();
+  //   //FirebaseUser user = FirebaseAuth.instance.currentUser;
+  //   //print('$user');
+  //   runApp(new MaterialApp(
+  //     home: new BeforeLoggedInMainScreen(),
+  //   ));
+  // }
 }

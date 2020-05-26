@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:smart_moskea/pages/BeforeLoggedInMainScreen.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -7,35 +9,14 @@ class AuthService {
         (FirebaseUser user) => user?.uid,
       );
 
-  // Email & Password Signup
+  // // Email & Password Signup
 
-  Future<String> createUserWithEmailAndPassword(
-      String email, String password, String name) async {
-    final currentUser = await _firebaseAuth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-
-    //update the username
-    var userUpdateInfo = UserUpdateInfo();
-    userUpdateInfo.displayName = name;
-    await currentUser.updateProfile(userUpdateInfo);
-    await currentUser.reload();
-    return currentUser.uid;
-  }
-
-  // Email & Password Sign In
-
-  Future<String> signInwithEmailAndPassword(
-      String email, String password) async {
-    return (await _firebaseAuth.signInWithEmailAndPassword(
-            email: email, password: password))
-        .uid;
-  }
-
-  // Sign Out
-
-  signOut() {
-    return _firebaseAuth.signOut();
+  void signOut() {
+    FirebaseAuth.instance.signOut();
+    //FirebaseUser user = FirebaseAuth.instance.currentUser;
+    //print('$user');
+    runApp(new MaterialApp(
+      home: new BeforeLoggedInMainScreen(),
+    ));
   }
 }

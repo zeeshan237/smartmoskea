@@ -104,8 +104,6 @@ class _LoggedInMainScreenState extends State<LoggedInMainScreen> {
               trailing: new Icon(Icons.settings),
               title: new Text("Settings"),
               onTap: () {
-                //LoginPage().signOut();
-                AuthServices().signOut();
                 // Navigator.push(
                 //     context,
                 //     MaterialPageRoute(
@@ -117,12 +115,7 @@ class _LoggedInMainScreenState extends State<LoggedInMainScreen> {
               trailing: new Icon(Icons.exit_to_app),
               title: new Text("Logout"),
               onTap: () {
-                //LoginPage().signOut();
                 AuthServices().signOut();
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => BeforeLoggedInMainScreen()));
               },
             ),
           ],
