@@ -54,6 +54,8 @@ class _LoginPageState extends State<LoginPage>
   Color left = Colors.black;
   Color right = Colors.white;
 
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   int SelectedRadio;
   bool viewComVisible = false;
   bool viewImamVisible = false;
@@ -461,31 +463,31 @@ class _LoginPageState extends State<LoginPage>
   //     duration: Duration(seconds: 3),
   //   ));
   // }
-  testCredentials(BuildContext context) async {
-    print('........inside test credentials ....');
-    final Firestore firestore = Firestore.instance;
+  // testCredentials(BuildContext context) async {
+  //   print('........inside test credentials ....');
+  //   final Firestore firestore = Firestore.instance;
 
-    firestore.collection('users').getDocuments().then((snapshot) {
-      print('length: ${snapshot.documents.length}');
+  //   firestore.collection('users').getDocuments().then((snapshot) {
+  //     print('length: ${snapshot.documents.length}');
 
-      snapshot.documents.forEach((document) {
-        String name = document['name'];
+  //     snapshot.documents.forEach((document) {
+  //       String name = document['name'];
 
-        String phoneNumber = document['phonenumber'];
-        String password = document['password'];
+  //       String phoneNumber = document['phonenumber'];
+  //       String password = document['password'];
 
-        if (phoneNumber == loginEmailController.text &&
-            password == loginPasswordController.text) {
-          print('logged In');
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => LoggedInMainScreen()));
-        }
+  //       if (phoneNumber == loginEmailController.text &&
+  //           password == loginPasswordController.text) {
+  //         print('logged In');
+  //         Navigator.push(context,
+  //             MaterialPageRoute(builder: (context) => LoggedInMainScreen()));
+  //       }
 
-        print('$name -> $password');
-        print('$phoneNumber');
-      });
-    });
-  }
+  //       print('$name -> $password');
+  //       print('$phoneNumber');
+  //     });
+  //   });
+  // }
 
 // void allPhoneNO(BuildContext context) {
 //    print('........inside test credentials ....');
@@ -1161,13 +1163,16 @@ class _LoginPageState extends State<LoginPage>
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: signupEmailController.text,
           password: signupPasswordController.text);
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              content: Text("Success signup Sucessfully"),
-            );
-          });
+      // remove
+      sendEmailVerification();
+      _showVerifyEmailDialog(context);
+      // showDialog(
+      //     context: context,
+      //     builder: (context) {
+      //       return AlertDialog(
+      //         content: Text("Success signup Sucessfully"),
+      //       );
+      //     });
 
       // user = await mAuth.createUserWithEmailAndPassword(
       //     email: loginEmailController.text, password: loginPasswordController.text);
@@ -1191,15 +1196,8 @@ class _LoginPageState extends State<LoginPage>
           .signInWithEmailAndPassword(
               email: loginEmailController.text,
               password: loginPasswordController.text);
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => LoggedInMainScreen()));
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              content: Text("Success LOGIN Sucessfully"),
-            );
-          });
+
+      _checkEmailVerification(context);
 
       // user = await mAuth.createUserWithEmailAndPassword(
       //     email: loginEmailController.text, password: loginPasswordController.text);
@@ -1227,4 +1225,101 @@ class _LoginPageState extends State<LoginPage>
   //     home: new BeforeLoggedInMainScreen(),
   //   ));
   // }
+
+  bool _isEmailVerified = false;
+
+  void _checkEmailVerification(context) async {
+    _isEmailVerified = await isEmailVerified();
+    if (_isEmailVerified) {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => LoggedInMainScreen()));
+
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              content: Text("Welcome! You Are Login Sucessfully"),
+            );
+          });
+    } else {
+      sendEmailVerification();
+      _showVerifyEmailDialog(context);
+    }
+  }
+
+  void _resentVerifyEmail() {
+    sendEmailVerification();
+    // remove  _showVerifyEmailSentDialog(context);
+  }
+
+  void _showVerifyEmailDialog(context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("SignUp Success! Verify Your Account"),
+          content: new Text("Please verify account, WE sent you link to email"),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("Resent link"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _resentVerifyEmail();
+                _showVerifyEmailSentDialog(context);
+              },
+            ),
+            new FlatButton(
+              child: new Text("Dismiss"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showVerifyEmailSentDialog(context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Verify your account"),
+          content:
+              new Text("Link to verify account has been sent to your email"),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("Dismiss"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<FirebaseUser> getCurrentUser() async {
+    FirebaseUser user = await _firebaseAuth.currentUser();
+    return user;
+  }
+
+  Future<void> signOut() async {
+    return _firebaseAuth.signOut();
+  }
+
+  Future<void> sendEmailVerification() async {
+    FirebaseUser user = await _firebaseAuth.currentUser();
+    user.sendEmailVerification();
+    _showVerifyEmailSentDialog(context);
+  }
+
+  Future<bool> isEmailVerified() async {
+    FirebaseUser user = await _firebaseAuth.currentUser();
+    return user.isEmailVerified;
+  }
 }
