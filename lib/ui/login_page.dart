@@ -58,7 +58,7 @@ class _LoginPageState extends State<LoginPage>
   Color right = Colors.white;
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  User currentUser;
+  //User currentUser;
 
   int SelectedRadio;
   bool viewComVisible = false;

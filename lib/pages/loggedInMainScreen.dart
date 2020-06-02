@@ -37,7 +37,7 @@ class _LoggedInMainScreenState extends State<LoggedInMainScreen> {
   FirebaseAuth auth;
   int _counter = 0;
   int _current = 2;
-  User userr;
+  //User userr;
   updateDetails() {
     setState(() {});
   }
