@@ -51,6 +51,9 @@ dependencies:
   compasstools: ^0.0.1
   flutter_qiblah:
   flutter_svg: ^0.17.3+1
+  settings_ui: ^0.3.0
+  flutter_ringtone_player: ^2.0.0
+  volume: ^0.1.4
 
 dev_dependencies:
   flutter_test:

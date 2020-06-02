@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'dart:io';
@@ -10,8 +11,6 @@ import 'package:flutter/material.dart';
 import 'chat_message.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
-
-
 
 const String _name = "Anonymus";
 
@@ -28,7 +27,14 @@ class messages extends StatefulWidget {
   State createState() => messagesState(_title);
 }
 
-  class messagesState extends State<messages> with TickerProviderStateMixin {
+class messagesState extends State<messages> with TickerProviderStateMixin {
+  userPRofileGet() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    print('you are' + user.uid);
+    print('your email' + user.email);
+    //print('your name' + user.displayName);
+  }
+
   final _title;
   final List<ChatMessage> _messages;
   final TextEditingController _textController;
@@ -37,7 +43,8 @@ class messages extends StatefulWidget {
 
   bool _isComposing = false;
 
-  messagesState(String title) : _title = title,
+  messagesState(String title)
+      : _title = title,
         _isComposing = false,
         _messages = <ChatMessage>[],
         _textController = TextEditingController(),
@@ -48,8 +55,7 @@ class messages extends StatefulWidget {
     _messageDatabaseReference.onChildAdded.listen(_onMessageAdded);
   }
 
-
-   Widget _buildTextComposer() {
+  Widget _buildTextComposer() {
     return IconTheme(
         data: IconThemeData(color: Theme.of(context).accentColor),
         child: Container(
@@ -104,6 +110,7 @@ class messages extends StatefulWidget {
   void _onMessageAdded(Event event) {
     final text = event.snapshot.value["text"];
     final imageUrl = event.snapshot.value["imageUrl"];
+    userPRofileGet();
 
     ChatMessage message = imageUrl == null
         ? _createMessageFromText(text)
@@ -164,36 +171,36 @@ class messages extends StatefulWidget {
         ),
       );
 
-    @override
-    Widget build(BuildContext context) {
-      return Scaffold(
-        body: Container(
-          child: Column(
-            children: <Widget>[
-              Flexible(
-                child: ListView.builder(
-                  padding: EdgeInsets.all(8.0),
-                  reverse: true,
-                  itemBuilder: (_, int index) => _messages[index],
-                  itemCount: _messages.length,
-                ),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        child: Column(
+          children: <Widget>[
+            Flexible(
+              child: ListView.builder(
+                padding: EdgeInsets.all(8.0),
+                reverse: true,
+                itemBuilder: (_, int index) => _messages[index],
+                itemCount: _messages.length,
               ),
-              Divider(height: 1.0),
-              Container(
-                decoration: BoxDecoration(color: Theme.of(context).cardColor),
-                child: _buildTextComposer(),
-              ),
-            ],
-          ),
-          decoration: Theme.of(context).platform == TargetPlatform.android
-              ? BoxDecoration(
-                  border: Border(
-                  top: BorderSide(color: Colors.grey[200]),
-                ))
-              : null,
+            ),
+            Divider(height: 1.0),
+            Container(
+              decoration: BoxDecoration(color: Theme.of(context).cardColor),
+              child: _buildTextComposer(),
+            ),
+          ],
         ),
-      );
-    }
+        decoration: Theme.of(context).platform == TargetPlatform.android
+            ? BoxDecoration(
+                border: Border(
+                top: BorderSide(color: Colors.grey[200]),
+              ))
+            : null,
+      ),
+    );
+  }
 
   @override
   void dispose() {
@@ -201,14 +208,10 @@ class messages extends StatefulWidget {
       message.animationController.dispose();
     super.dispose();
   }
-
-  }
+}
 
 class Choice {
   const Choice(this.title);
 
   final String title;
 }
-
-
-

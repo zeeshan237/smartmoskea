@@ -1,3 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:smart_moskea/models/user.dart';
+import 'package:smart_moskea/pages/userProfile.dart';
 import 'package:smart_moskea/requests/authServices.dart';
 
 import '../ui/login_page.dart';
@@ -30,8 +34,29 @@ class LoggedInMainScreen extends StatefulWidget {
 }
 
 class _LoggedInMainScreenState extends State<LoggedInMainScreen> {
+  FirebaseAuth auth;
   int _counter = 0;
   int _current = 2;
+  User userr;
+  updateDetails() {
+    setState(() {});
+  }
+
+  _LoggedInMainScreenState() {
+    userPRofileGet().then((value) {
+      if (value != null) {
+        this.accountEmail = value;
+        updateDetails();
+      }
+    });
+
+    getUserName().then((value) {
+      if (value != null) {
+        this.accountName = value;
+        updateDetails();
+      }
+    });
+  }
 
   Widget callPage(int index) {
     switch (index) {
@@ -46,10 +71,13 @@ class _LoggedInMainScreenState extends State<LoggedInMainScreen> {
       case 3:
         return favorite();
       //case 4: return LoginPage();
-      //  case 4: return user_profile();
+      case 4:
+        return App();
     }
   }
 
+  String accountEmail = "";
+  String accountName = "";
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -61,86 +89,146 @@ class _LoggedInMainScreenState extends State<LoggedInMainScreen> {
     });
   }
 
+  Future<bool> _onBackPressed() {
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text("Do you exit the app?"),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("NO"),
+                  onPressed: () => Navigator.pop(context, false),
+                ),
+                FlatButton(
+                  child: Text("YES"),
+                  onPressed: () => Navigator.pop(context, true),
+                )
+              ],
+            ));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
-      appBar: new AppBar(
-        backgroundColor: Colors.deepOrangeAccent,
-        //  leading: new Icon(Icons.menu),
-        title: new Text(
-          "Smart Moskea",
-          style: TextStyle(
-            fontSize: 28.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        elevation: 0.0,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.notifications,
-              color: Colors.white,
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        backgroundColor: Theme.of(context).primaryColor,
+        appBar: new AppBar(
+          backgroundColor: Colors.deepOrangeAccent,
+          //  leading: new Icon(Icons.menu),
+          title: new Text(
+            "Smart Moskea",
+            style: TextStyle(
+              fontSize: 28.0,
+              fontWeight: FontWeight.bold,
             ),
-            onPressed: () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => notification()));
-            },
           ),
-        ],
-      ),
-      drawer: new Drawer(
-        child: new ListView(
-          children: <Widget>[
-            new UserAccountsDrawerHeader(
-              accountName: new Text("Ahmad Hassan"),
-              accountEmail: new Text("ahmadhassan136@gmail.com"),
-              decoration: BoxDecoration(color: Colors.deepOrangeAccent),
-              currentAccountPicture: new CircleAvatar(
-                backgroundImage: new NetworkImage("http://i.pravatar.cc/300"),
+          elevation: 0.0,
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.notifications,
+                color: Colors.white,
               ),
-            ),
-            new ListTile(
-              trailing: new Icon(Icons.settings),
-              title: new Text("Settings"),
-              onTap: () {
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => BeforeLoggedInMainScreen()));
-              },
-            ),
-            new Divider(),
-            new ListTile(
-              trailing: new Icon(Icons.exit_to_app),
-              title: new Text("Logout"),
-              onTap: () {
-                AuthServices().signOut();
+              onPressed: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => notification()));
               },
             ),
           ],
         ),
-      ),
-      body: callPage(_current),
-      // This trailing comma makes auto-formatting nicer for build methods.
-      bottomNavigationBar: CurvedNavigationBar(
-        height: 50,
-        backgroundColor: Colors.white,
-        color: Colors.deepOrangeAccent,
-        items: <Widget>[
-          Icon(Icons.forum, size: 30, color: Colors.black),
-          Icon(Icons.directions, size: 30, color: Colors.black),
-          Icon(Icons.add, size: 30, color: Colors.black),
-          Icon(Icons.favorite, size: 30, color: Colors.black),
-          Icon(Icons.person, size: 30, color: Colors.black),
-        ],
-        index: 2,
-        onTap: (index) {
-          setState(() {
-            _current = index;
-          });
-        },
+        drawer: new Drawer(
+          child: new ListView(
+            children: <Widget>[
+              new UserAccountsDrawerHeader(
+                accountName: new Text(accountName),
+                accountEmail: new Text(accountEmail),
+                decoration: BoxDecoration(color: Colors.deepOrangeAccent),
+                currentAccountPicture: new CircleAvatar(
+                  backgroundImage: new NetworkImage("http://i.pravatar.cc/300"),
+                ),
+              ),
+              new ListTile(
+                trailing: new Icon(Icons.settings),
+                title: new Text("Settings"),
+                onTap: () {
+                  // Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) => BeforeLoggedInMainScreen()));
+                },
+              ),
+              new Divider(),
+              new ListTile(
+                trailing: new Icon(Icons.exit_to_app),
+                title: new Text("Logout"),
+                onTap: () {
+                  AuthServices().signOut();
+                },
+              ),
+            ],
+          ),
+        ),
+        body: callPage(_current),
+        // This trailing comma makes auto-formatting nicer for build methods.
+        bottomNavigationBar: CurvedNavigationBar(
+          height: 50,
+          backgroundColor: Colors.white,
+          color: Colors.deepOrangeAccent,
+          items: <Widget>[
+            Icon(Icons.forum, size: 30, color: Colors.black),
+            Icon(Icons.directions, size: 30, color: Colors.black),
+            Icon(Icons.add, size: 30, color: Colors.black),
+            Icon(Icons.favorite, size: 30, color: Colors.black),
+            Icon(Icons.person, size: 30, color: Colors.black),
+          ],
+          index: 2,
+          onTap: (index) {
+            setState(() {
+              _current = index;
+            });
+          },
+        ),
       ),
     );
+  }
+
+  //var usb = "dfgk";
+  // profile getter
+  Future<String> userPRofileGet() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    print('you are' + user.uid);
+    print('your email' + user.email);
+
+    //uuuser.get;
+    //final String email = user.uid.toString();
+    return user.email;
+  }
+
+  //get current user
+  FirebaseAuth _firebaseAuth;
+  Future getCurrentUser() async {
+    return await _firebaseAuth.currentUser();
+  }
+
+  // //fetch user name and other fields
+
+  // Future<DocumentSnapshot> getUserInfo() async {
+  //   var firebaseUser = await FirebaseAuth.instance.currentUser();
+  //   return await Firestore.instance
+  //       .collection("users")
+  //       .document(firebaseUser.uid)
+  //       .get();
+  // }
+
+  Future<String> getUserName() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    DocumentSnapshot ds =
+        await Firestore.instance.collection('users').document(user.uid).get();
+    print('my uid' + user.uid);
+    print('my name' + ds.data['name']);
+    print('my email' + user.email);
+
+    return ds.data['name'];
   }
 }

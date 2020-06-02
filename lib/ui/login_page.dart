@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:smart_moskea/models/user.dart';
 import 'package:smart_moskea/pages/BeforeLoggedInMainScreen.dart';
 import 'package:smart_moskea/pages/loggedInMainScreen.dart';
 import 'package:smart_moskea/style/theme.dart' as Theme;
@@ -23,6 +24,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
+  String uid;
+
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   final FocusNode myFocusNodeEmailLogin = FocusNode();
@@ -55,6 +58,7 @@ class _LoginPageState extends State<LoginPage>
   Color right = Colors.white;
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  User currentUser;
 
   int SelectedRadio;
   bool viewComVisible = false;
@@ -205,25 +209,25 @@ class _LoginPageState extends State<LoginPage>
   //     'password': signupConfirmPasswordController.text
   //     });
 
-  final databaseReference = Firestore.instance.collection("users");
+//   final databaseReference = Firestore.instance.collection("users");
 
-  sendData() async {
-//  await databaseReference.document("1")
-//  .setData({
-//       'name' : signupNameController.text,
-//       'phonenumber': signupPhoneController.text,
+//   sendData() async {
+// //  await databaseReference.document("1")
+// //  .setData({
+// //       'name' : signupNameController.text,
+// //       'phonenumber': signupPhoneController.text,
+// //       'catogery': SelectedRadio,
+// //       'password': signupConfirmPasswordController.text,
+// //   });
+
+//     DocumentReference ref = await databaseReference.add({
+//       'name': signupNameController.text,
+//       'phonenumber': signupEmailController.text,
 //       'catogery': SelectedRadio,
 //       'password': signupConfirmPasswordController.text,
-//   });
-
-    DocumentReference ref = await databaseReference.add({
-      'name': signupNameController.text,
-      'phonenumber': signupEmailController.text,
-      'catogery': SelectedRadio,
-      'password': signupConfirmPasswordController.text,
-    });
-    print(ref.documentID);
-  }
+//     });
+//     print(ref.documentID);
+//   }
 
   // DBCrypt dBCrypt = DBCrypt();
   // const plainPwd = 'password';
@@ -463,7 +467,7 @@ class _LoginPageState extends State<LoginPage>
   //     duration: Duration(seconds: 3),
   //   ));
   // }
-  // testCredentials(BuildContext context) async {
+  // Credentials(BuildContext context) async {
   //   print('........inside test credentials ....');
   //   final Firestore firestore = Firestore.instance;
 
@@ -473,7 +477,7 @@ class _LoginPageState extends State<LoginPage>
   //     snapshot.documents.forEach((document) {
   //       String name = document['name'];
 
-  //       String phoneNumber = document['phonenumber'];
+  //       String phonetestNumber = document['phonenumber'];
   //       String password = document['password'];
 
   //       if (phoneNumber == loginEmailController.text &&
@@ -719,6 +723,8 @@ class _LoginPageState extends State<LoginPage>
                         onPressed: () {
                           //testCredentials(context);
                           signInWithEmailPassword(context);
+                          //passUid(uid);
+
                           //getDataPhoneNo();
                           //getphoneno();
                         })),
@@ -1045,7 +1051,7 @@ class _LoginPageState extends State<LoginPage>
                       //     {
 
                       //      //allPhoneNOallPhoneNO(context);
-                      //       //   sendData();
+
                       //        //verifyPhoneNumber(phoneNumber);
                       //       //  uploadImage(context);
 
@@ -1060,7 +1066,7 @@ class _LoginPageState extends State<LoginPage>
       ),
     );
   }
-
+  //String uName = signupNameController.text;
   // Future<void> verifyPhoneNumber(phoneNumber) async
   // {
 
@@ -1157,15 +1163,21 @@ class _LoginPageState extends State<LoginPage>
 
   //signup using email password
 
-  //FirebaseAuth mAuth;
   Future<void> signUpWithEmailPassword(context) async {
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: signupEmailController.text,
-          password: signupPasswordController.text);
-      // remove
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: signupEmailController.text,
+              password: signupPasswordController.text)
+          .then((value) {
+        if (value != null) {
+          sendData(value.uid);
+        }
+      });
       sendEmailVerification();
       _showVerifyEmailDialog(context);
+      // passUid(currentUser.id);
+// ACTUALLY i put send data method on onPressed because, actually i want to save data only those who are verfied their email, but i was failed to achieve this, so thats why i write sendData on signup button, it will save every user who is not verified it will save each and every
       // showDialog(
       //     context: context,
       //     builder: (context) {
@@ -1188,8 +1200,7 @@ class _LoginPageState extends State<LoginPage>
     }
   }
 
-//Sign In using email password
-
+  //Sign In using email password
   Future<void> signInWithEmailPassword(context) async {
     try {
       final currentUser = await FirebaseAuth.instance
@@ -1219,8 +1230,8 @@ class _LoginPageState extends State<LoginPage>
 
   // void signOut() {
   //   FirebaseAuth.instance.signOut();
-  //   //FirebaseUser user = FirebaseAuth.instance.currentUser;
-  //   //print('$user');
+  //FirebaseUser user = FirebaseAuth.instance.currentUser;
+  //print('$user');
   //   runApp(new MaterialApp(
   //     home: new BeforeLoggedInMainScreen(),
   //   ));
@@ -1303,11 +1314,6 @@ class _LoginPageState extends State<LoginPage>
     );
   }
 
-  Future<FirebaseUser> getCurrentUser() async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
-    return user;
-  }
-
   Future<void> signOut() async {
     return _firebaseAuth.signOut();
   }
@@ -1316,10 +1322,75 @@ class _LoginPageState extends State<LoginPage>
     FirebaseUser user = await _firebaseAuth.currentUser();
     user.sendEmailVerification();
     _showVerifyEmailSentDialog(context);
+    //print('my uid is' + uName);
   }
 
   Future<bool> isEmailVerified() async {
     FirebaseUser user = await _firebaseAuth.currentUser();
     return user.isEmailVerified;
   }
+
+  // Save user to firestore
+
+  // final usersReference = Firestore.instance.collection("users");
+
+  //final FirebaseAuth _auth = FirebaseAuth.instance;
+  // getCurrentUser() async {
+  //     final FirebaseUser user = await _auth.currentUser();
+  //     final uid = user.uid;
+  //     // Similarly we can get email as well
+  //     //final uemail = user.email;
+  //     print(uid);
+  //     //print(uemail);
+  //   }
+
+  // this method is from instagram app
+  // sendData() async {
+  //   final FirebaseUser getCurrentUser =
+  //       await FirebaseAuth.instance.currentUser();
+
+  //   DocumentSnapshot documentSnapshot =
+  //       await usersReference.document(getCurrentUser.uid).get();
+
+  //   //  if (!documentSnapshot.exists)
+  //   usersReference.document(getCurrentUser.uid).setData({
+  //     'name': signupNameController.text,
+  //     'email': signupEmailController.text,
+  //     'password': signupConfirmPasswordController.text,
+  //     'catogery': SelectedRadio,
+  //     'url': getCurrentUser.photoUrl,
+  //     'timestamp': Timestamp,
+  //   });
+  //   documentSnapshot = await usersReference.document(getCurrentUser.uid).get();
+
+  //   currentUser = User.fromDocument(documentSnapshot);
+  // }
+
+  // sensd data working method last time we used
+
+  //FirebaseUser uUser;
+
+  final databaseReference = Firestore.instance.collection("users");
+
+  sendData(uid) async {
+    await databaseReference.document(uid).setData({
+      //HERE IS WANT TO PUT FIREBASE USER uiD
+      'name': signupNameController.text,
+      'email': signupEmailController.text,
+      'catogery': SelectedRadio,
+      'password': signupConfirmPasswordController.text,
+    });
+
+    // DocumentReference ref = await databaseReference.add({
+    //   'name': signupNameController.text,
+    //   'email': signupEmailController.text,
+    //   'catogery': SelectedRadio,
+    //   'password': signupConfirmPasswordController.text,
+    // });
+    // print(ref.documentID);
+  }
+
+  // void passUid(String id) {
+  //   print("myy id is" + id);
+  // }
 }
