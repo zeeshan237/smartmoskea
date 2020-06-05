@@ -1,10 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:smart_moskea/models/user.dart';
+import 'package:smart_moskea/pages/HomeMsg.dart';
+import 'package:smart_moskea/pages/PhotoUpload.dart';
 import 'package:smart_moskea/pages/answered.dart';
 import 'package:smart_moskea/pages/like_questions.dart';
 import 'package:smart_moskea/pages/your_questions.dart';
-import 'package:smart_moskea/pages/messages.dart';
+//import 'package:smart_moskea/pages/messages.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'PhotoUpload.dart';
 
 class forum extends StatefulWidget {
   @override
@@ -12,6 +17,7 @@ class forum extends StatefulWidget {
 }
 
 class _forumState extends State<forum> {
+  //FirebaseUser user = await FirebaseAuth.instance.currentUser();
   int selectPage = 0;
   final List<String> category = [
     "Messages",
@@ -20,14 +26,28 @@ class _forumState extends State<forum> {
     "Likes"
   ];
 
+  //get current user
+  // FirebaseAuth _firebaseAuth;
+  // Future getCurrentUser() async {
+  //   FirebaseUser user = await FirebaseAuth.instance.currentUser();
+  //   return user;
+  // }
+  User currentUser;
+
   Widget callPage(int index) {
     switch (index) {
       case 0:
-        return messages(
-          'title',
-          userId: 'userId',
-          onSignedOut: () {},
-        );
+        return HomeMsg();
+      //  Navigator.push(context, MaterialPageRoute(builder: (context) {
+      //  return new UploadPhotoPage();
+      //  }));
+      // return HomeMsg(
+      //     //gCurrentUser:currentUser,
+      //     ); // Timeline Page   //Upload Page for using button here
+      // return messages(
+      //   'title',
+      //   userId: 'userId',
+      //   onSignedOut: () {},
       case 1:
         return answered();
       case 2:
@@ -63,13 +83,14 @@ class _forumState extends State<forum> {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20.0,
-                    color: index == selectPage ? Colors.white : Colors.white70,
+                    color: index == selectPage ? Colors.black : Colors.white70,
                     letterSpacing: 1.2,
                   ),
                 ),
               ),
             );
           },
+          //physics: NeverScrollableScrollPhysics(),
         ),
       ),
       Expanded(

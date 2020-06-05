@@ -26,6 +26,11 @@ class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
   String uid;
 
+  final DateTime timestamp = DateTime.now();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  User currentUser;
+  DocumentSnapshot documentSnapshot;
+
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   final FocusNode myFocusNodeEmailLogin = FocusNode();
@@ -56,9 +61,6 @@ class _LoginPageState extends State<LoginPage>
 
   Color left = Colors.black;
   Color right = Colors.white;
-
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  //User currentUser;
 
   int SelectedRadio;
   bool viewComVisible = false;
@@ -1203,10 +1205,9 @@ class _LoginPageState extends State<LoginPage>
   //Sign In using email password
   Future<void> signInWithEmailPassword(context) async {
     try {
-      final currentUser = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: loginEmailController.text,
-              password: loginPasswordController.text);
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: loginEmailController.text,
+          password: loginPasswordController.text);
 
       _checkEmailVerification(context);
 
@@ -1379,15 +1380,13 @@ class _LoginPageState extends State<LoginPage>
       'email': signupEmailController.text,
       'catogery': SelectedRadio,
       'password': signupConfirmPasswordController.text,
+      'timestamp': timestamp,
+      'uid': uid,
+      //'url': currentUser.url,
     });
+    // documentSnapshot = await databaseReference.document(uid).get();
 
-    // DocumentReference ref = await databaseReference.add({
-    //   'name': signupNameController.text,
-    //   'email': signupEmailController.text,
-    //   'catogery': SelectedRadio,
-    //   'password': signupConfirmPasswordController.text,
-    // });
-    // print(ref.documentID);
+    // currentUser = User.fromDocument(documentSnapshot);
   }
 
   // void passUid(String id) {
