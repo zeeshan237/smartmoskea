@@ -9,7 +9,7 @@ import 'package:smart_moskea/pages/your_questions.dart';
 //import 'package:smart_moskea/pages/messages.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'PhotoUpload.dart';
+import 'package:smart_moskea/pages/PhotoUpload.dart';
 
 class forum extends StatefulWidget {
   @override

@@ -15,7 +15,7 @@ import 'package:smart_moskea/pages/loggedInMainScreen.dart';
 
 final StorageReference storageReference =
     FirebaseStorage.instance.ref().child("Post Pictures");
-
+final usersRef = Firestore.instance.collection('users');
 final postsReference = Firestore.instance.collection("posts");
 //upload page
 
@@ -29,7 +29,7 @@ class HomeMsg extends StatefulWidget {
 
 class _HomeMsg extends State<HomeMsg> {
 //Needs Integration captureImageWithCamera method
-  
+
   File file;
 
   @override

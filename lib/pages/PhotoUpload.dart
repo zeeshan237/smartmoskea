@@ -226,7 +226,7 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
       "postId": postId,
       "ownerId": accountId,
       "username": accountName,
-      "mediaUrl": url,
+      "url": url,
       "email": accountEmail,
       "description": description,
       "timestamp": timestamp,

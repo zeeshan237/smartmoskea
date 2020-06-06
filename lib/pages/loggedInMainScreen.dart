@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:smart_moskea/models/user.dart';
+import 'package:smart_moskea/pages/ProfilePage.dart';
 import 'package:smart_moskea/pages/userProfile.dart';
 import 'package:smart_moskea/requests/authServices.dart';
 
@@ -56,6 +57,13 @@ class _LoggedInMainScreenState extends State<LoggedInMainScreen> {
         updateDetails();
       }
     });
+
+    userCurrentID().then((value) {
+      if (value != null) {
+        this.accountID = value;
+        updateDetails();
+      }
+    });
   }
 
   Widget callPage(int index) {
@@ -69,7 +77,7 @@ class _LoggedInMainScreenState extends State<LoggedInMainScreen> {
             data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
             child: map());
       case 3:
-        return favorite();
+        return ProfilePage(userProfileId: accountID);
       //case 4: return LoginPage();
       case 4:
         return App();
@@ -78,6 +86,7 @@ class _LoggedInMainScreenState extends State<LoggedInMainScreen> {
 
   String accountEmail = "";
   String accountName = "";
+  String accountID = "";
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -203,6 +212,16 @@ class _LoggedInMainScreenState extends State<LoggedInMainScreen> {
     //uuuser.get;
     //final String email = user.uid.toString();
     return user.email;
+  }
+
+  Future<String> userCurrentID() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    print('you are' + user.uid);
+    print('your email' + user.email);
+
+    //uuuser.get;
+    //final String email = user.uid.toString();
+    return user.uid;
   }
 
   //get current user
