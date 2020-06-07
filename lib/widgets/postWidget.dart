@@ -160,28 +160,30 @@ class _PostState extends State<Post> {
         bool isPostOwner = currentOnlineUserId == ownerId;
 
         return ListTile(
-          leading: CircleAvatar(
-            backgroundImage: CachedNetworkImageProvider(user.url),
-            backgroundColor: Colors.grey,
-          ),
-          title: GestureDetector(
-            onTap: () => print("Show Profile"),
-            child: Text(
-              user.name,
-              style:
-                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            leading: CircleAvatar(
+              backgroundImage:
+                  CachedNetworkImageProvider("http://i.pravatar.cc/300"),
+              backgroundColor: Colors.black,
             ),
-          ),
-          trailing: isPostOwner
-              ? IconButton(
-                  icon: Icon(
-                    Icons.more_vert,
-                    color: Colors.white,
-                  ),
-                  onPressed: () => print("deleted"),
-                )
-              : Text(""),
-        );
+            title: GestureDetector(
+              onTap: () => print("Show Profile"),
+              child: Text(
+                user.name,
+                style:
+                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              ),
+            ),
+            trailing: //isPostOwner
+                // ?
+                IconButton(
+              icon: Icon(
+                Icons.more_vert,
+                color: Colors.black,
+              ),
+              onPressed: () => print("deleted"),
+            )
+            // : Text(""),
+            );
       },
     );
   }
@@ -192,7 +194,12 @@ class _PostState extends State<Post> {
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
-          Image.network(url),
+          Image.network(
+            url,
+            height: 300,
+            width: 320,
+            fit: BoxFit.fitWidth,
+          ),
         ],
       ),
     );
@@ -210,7 +217,7 @@ class _PostState extends State<Post> {
             GestureDetector(
               onTap: () => print("liked Post"),
               child: Icon(
-                Icons.favorite, color: Colors.grey,
+                Icons.favorite, color: Colors.red,
                 // isLiked ? Icons.favorite : Icons.favorite_border,
                 // size: 20.0,
                 // color: Colors.pink,
@@ -222,7 +229,7 @@ class _PostState extends State<Post> {
               child: Icon(
                 Icons.chat_bubble_outline,
                 size: 28.0,
-                color: Colors.white,
+                color: Colors.black,
               ),
             ),
           ],
@@ -230,11 +237,11 @@ class _PostState extends State<Post> {
         Row(
           children: <Widget>[
             Container(
-                margin: EdgeInsets.only(left: 20.0),
+                margin: EdgeInsets.only(left: 20.0, bottom: 5.0),
                 child: Text(
-                  "StickerCount Likes",
+                  "0 likes",
                   style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
+                      color: Colors.black, fontWeight: FontWeight.bold),
                 ))
           ],
         ),
@@ -242,17 +249,20 @@ class _PostState extends State<Post> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
-              margin: EdgeInsets.only(left: 20.0),
+              margin: EdgeInsets.only(bottom: 40.0, left: 20.0, right: 5.0),
               child: Text(
-                "$username ",
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                "Question:",
+                // "$username ",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15.0),
               ),
             ),
             Expanded(
                 child: Text(
               description,
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.black, fontSize: 15.0),
             ))
           ],
         )

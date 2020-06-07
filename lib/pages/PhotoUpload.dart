@@ -1,13 +1,9 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import "package:flutter/material.dart";
 import 'package:image_picker/image_picker.dart';
-import 'package:smart_moskea/pages/HomeMsg.dart';
-import 'package:smart_moskea/models/User.dart';
-import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import 'package:image/image.dart' as ImD;
 import 'package:path_provider/path_provider.dart';
@@ -15,13 +11,10 @@ import '../widgets/progress.dart';
 
 final StorageReference storageReference =
     FirebaseStorage.instance.ref().child("Post Pictures");
-
 final postsReference = Firestore.instance.collection("posts");
 
 class UploadPhotoPage extends StatefulWidget {
-  State<StatefulWidget> createState() {
-    return _UploadPhotoPageState();
-  }
+  State<StatefulWidget> createState() => _UploadPhotoPageState();
 }
 
 class _UploadPhotoPageState extends State<UploadPhotoPage> {
@@ -29,48 +22,25 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
   File sampleImage;
   bool uploading = false;
   String postId = Uuid().v4();
-
   TextEditingController descriptionTextEditingController =
       TextEditingController();
-
   String _myValue;
   final formKey = new GlobalKey<FormState>();
-
-  //getting users details
-  updateDetails() {
-    setState(() {});
-  }
-
-  _UploadPhotoPageState() {
-    userPRofileGet().then((value) {
-      if (value != null) {
-        this.accountEmail = value;
-        updateDetails();
-      }
-    });
-
-    getUserName().then((value) {
-      if (value != null) {
-        this.accountName = value;
-        updateDetails();
-      }
-    });
-
-    getUserId().then((value) {
-      if (value != null) {
-        this.accountId = value;
-        updateDetails();
-      }
-    });
-  }
-
   String accountEmail = "";
   String accountName = "";
   String accountId = "";
+  Future<FirebaseUser> getUserDetails() async {
+    final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    accountEmail = user.email;
+    accountId = user.uid;
+    DocumentSnapshot ds =
+        await Firestore.instance.collection('users').document(user.uid).get();
+    accountName = ds.data['name'];
+    return user;
+  }
 
   Future getImage() async {
     var tempImage = await ImagePicker.pickImage(source: ImageSource.gallery);
-
     setState(() {
       sampleImage = tempImage;
     });
@@ -78,7 +48,6 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
 
   bool validateAndSave() {
     final form = formKey.currentState;
-
     if (form.validate()) {
       form.save();
       return true;
@@ -104,12 +73,19 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
           //   color: Colors.black,
           //   onPressed: clearPostInfo,
           // ),
-          title: new Text("Upload Image"),
+          title: new Text("Ask Question"),
           centerTitle: true,
         ),
         body: new Center(
-          child:
-              sampleImage == null ? Text("Select and Image") : enableUpload(),
+          child: FutureBuilder<FirebaseUser>(
+              future: getUserDetails(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return circularProgress();
+                return sampleImage == null
+                    ? Text(
+                        "|      1:  Ask without Image      |      2:  Ask With Image      |")
+                    : enableUpload();
+              }),
         ),
         floatingActionButton: FloatingActionButton(
             backgroundColor: Colors.deepOrangeAccent,
@@ -117,13 +93,11 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
             onPressed: () {
               takeImage(context);
             }));
-
     // file == null ? takeImage(context) : displayUploadFormScreen(),
     //this on pressed when called takeImage will be called success but
     //after image taken it should be displayUploadFormScreen() called but its not working, check this small issue so i will also judge your expertise then we will discuss project details budget and document
     //add question here.
     // r u there?????
-
     //   body: new Center(
     //     child: sampleImage == null ? Text("Select and Image") : enableUpload(),
     //   ),
@@ -141,28 +115,22 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
     final path = tDirectory.path;
     ImD.Image mImageFile = ImD.decodeImage(sampleImage.readAsBytesSync());
     final compressedImageFile = File('$path/img_$postId.jpg')
-      ..writeAsBytesSync(ImD.encodeJpg(mImageFile, quality: 90));
+      ..writeAsBytesSync(ImD.encodeJpg(mImageFile, quality: 60));
     setState(() {
       sampleImage = compressedImageFile;
     });
   }
 
 // handle submit post
-
   controlUploadAndSave() async {
     setState(() {
       uploading = true;
     });
-
     await compressingPhoto();
-
     String downloadUrl = await uploadPhoto(sampleImage);
-
     savePostInfoToFirestore(
         url: downloadUrl, description: descriptionTextEditingController.text);
-
     descriptionTextEditingController.clear();
-
     setState(() {
       sampleImage = null;
       uploading = false;
@@ -175,7 +143,6 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     print('you are' + user.uid);
     print('your email' + user.email);
-
     //uuuser.get;
     //final String email = user.uid.toString();
     return user.email;
@@ -189,7 +156,6 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
     print('my uid' + user.uid);
     print('my name' + ds.data['name']);
     print('my email' + user.email);
-
     return ds.data['uid'];
   }
 
@@ -201,7 +167,6 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
     print('my uid' + user.uid);
     print('my name' + ds.data['name']);
     print('my email' + user.email);
-
     return ds.data['name'];
   }
 
@@ -214,7 +179,6 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
   //   print(uid);
   //   //print(uemail);
   // }
-
   //String gettCurrentUser;
   // send to firestore
   savePostInfoToFirestore({String url, String description}) {
@@ -267,7 +231,6 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
               ),
             ),
           ),
-
           // Image.file(
           //   sampleImage,
           //   height: 25.0,
@@ -295,7 +258,6 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
             textColor: Colors.white,
             color: Colors.pink,
             onPressed:
-
                 // { validateAndSave;
                 uploading ? null : () => controlUploadAndSave(),
             // }

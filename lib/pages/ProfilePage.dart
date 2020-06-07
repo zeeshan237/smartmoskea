@@ -8,7 +8,6 @@ import 'package:smart_moskea/widgets/postTileWidget.dart';
 
 class ProfilePage extends StatefulWidget {
   final String userProfileId;
-
   ProfilePage({this.userProfileId});
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -19,39 +18,37 @@ class _ProfilePageState extends State<ProfilePage> {
   int countPost = 0;
   List<Post> postsList = [];
   String postOrientation = "grid";
-
-  void initState() {
-    getAllProfilePosts();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: header(context, titleText: 'Profile'),
-      body: ListView(
-        children: <Widget>[
-          // buildProfileHeader(),
-          createListAndGridPostOrientation(),
-          Divider(
-            height: 0.0,
-          ),
-          displayProfilePost(),
-          // Divider(),
-          // buildTogglePostOrientation(),
-          // Divider(
-          //   height: 0.0,
-          // ),
-          //  buildProfilePosts(),
-        ],
-      ),
+      // appBar: header(context, titleText: 'Profile'),
+      body: FutureBuilder<bool>(
+          future: getAllProfilePosts(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData || !snapshot.data) return circularProgress();
+            return ListView(
+              children: <Widget>[
+                // buildProfileHeader(),
+                createListAndGridPostOrientation(),
+                Divider(
+                  height: 10.0,
+                ),
+                displayProfilePost(),
+                // Divider(),
+                // buildTogglePostOrientation(),
+                // Divider(
+                //   height: 0.0,
+                // ),
+                //  buildProfilePosts(),
+              ],
+            );
+          }),
     );
   }
 
 // display post from post widget to profile
   displayProfilePost() {
-    if (loading) {
-      return circularProgress();
-    } else if (postsList.isEmpty) {
+    if (postsList.isEmpty) {
       print("List Empty hai");
       return Container(
         child: Column(
@@ -99,24 +96,18 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  getAllProfilePosts() async {
-    setState(() {
-      loading = true;
-    });
-
+  Future<bool> getAllProfilePosts() async {
+    if (postsList.isNotEmpty) return true;
     QuerySnapshot querySnapshot = await postsReference
         .document(widget.userProfileId)
-        .collection("time")
+        .collection("usersPosts")
         .orderBy("timestamp", descending: true)
         .getDocuments();
-
-    setState(() {
-      loading = false;
-      countPost = querySnapshot.documents.length;
-      postsList = querySnapshot.documents
-          .map((documentSnapshot) => Post.fromDocument(documentSnapshot))
-          .toList();
-    });
+    countPost = querySnapshot.documents.length;
+    postsList = querySnapshot.documents
+        .map((documentSnapshot) => Post.fromDocument(documentSnapshot))
+        .toList();
+    return true;
   }
 
   // create createListAndGridPostOrientation
