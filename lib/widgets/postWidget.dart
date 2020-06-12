@@ -1,15 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_moskea/models/user.dart';
 import 'package:smart_moskea/pages/PhotoUpload.dart';
-import 'package:smart_moskea/pages/HomeMsg.dart';
 import 'package:smart_moskea/widgets/progress.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:smart_moskea/widgets/CImageWidget.dart';
+
+final usersRef = Firestore.instance.collection('users');
 
 class Post extends StatefulWidget {
 //   Post() {
@@ -27,6 +29,7 @@ class Post extends StatefulWidget {
   final String email;
   final String description;
   final dynamic likes;
+  final int catogery;
 
   Post({
     this.postId,
@@ -36,18 +39,19 @@ class Post extends StatefulWidget {
     this.email,
     this.description,
     this.likes,
+    this.catogery,
   });
 
   factory Post.fromDocument(DocumentSnapshot documentSnapshot) {
     return Post(
-      postId: documentSnapshot["postId"],
-      ownerId: documentSnapshot["ownerId"],
-      username: documentSnapshot["username"],
-      url: documentSnapshot["url"],
-      email: documentSnapshot["email"],
-      description: documentSnapshot["description"],
-      likes: documentSnapshot["likes"],
-    );
+        postId: documentSnapshot["postId"],
+        ownerId: documentSnapshot["ownerId"],
+        username: documentSnapshot["username"],
+        url: documentSnapshot["url"],
+        email: documentSnapshot["email"],
+        description: documentSnapshot["description"],
+        likes: documentSnapshot["likes"],
+        catogery: documentSnapshot["catogery"]);
   }
 
   int getTotalNumberOfLikes(likes) {
@@ -74,6 +78,7 @@ class Post extends StatefulWidget {
         description: this.description,
         likes: this.likes,
         likeCount: getTotalNumberOfLikes(this.likes),
+        catogery: this.catogery,
       );
 }
 
@@ -82,15 +87,15 @@ class _PostState extends State<Post> {
     setState(() {});
   }
 
-  void initState() {
-    super.initState();
-    getUserId().then((value) => ((uid) {
-          currentOnlineUserId = uid;
-          print("meri id yeh hai" + currentOnlineUserId);
+  // void initState() {
+  //   super.initState();
+  //   getUserId().then((value) => ((uid) {
+  //         currentOnlineUserId = uid;
+  //         print("meri id yeh hai" + currentOnlineUserId);
 
-          updateDetails();
-        }));
-  }
+  //         updateDetails();
+  //       }));
+  // }
 
   // updateDetails() {
   //   setState(() {});
@@ -119,7 +124,8 @@ class _PostState extends State<Post> {
   int likeCount;
   bool isLiked;
   bool showHeart = false;
-  String currentOnlineUserId;
+  int catogery;
+  //String currentOnlineUserId;
 
   _PostState({
     this.postId,
@@ -130,6 +136,7 @@ class _PostState extends State<Post> {
     this.description,
     this.likes,
     this.likeCount,
+    this.catogery,
   });
 
   //final usersReference = Firestore.instance.collection("users");
@@ -150,6 +157,7 @@ class _PostState extends State<Post> {
   }
 
   createPostHead() {
+    //final currentOnlineUserId = getUserId();
     return FutureBuilder(
       future: usersRef.document(ownerId).get(),
       builder: (context, dataSnapshot) {
@@ -157,33 +165,33 @@ class _PostState extends State<Post> {
           return circularProgress();
         }
         User user = User.fromDocument(dataSnapshot.data);
-        bool isPostOwner = currentOnlineUserId == ownerId;
+
+        bool isPostOwner = user.id == ownerId && user.catogery == 1;
 
         return ListTile(
-            leading: CircleAvatar(
-              backgroundImage:
-                  CachedNetworkImageProvider("http://i.pravatar.cc/300"),
-              backgroundColor: Colors.black,
+          leading: CircleAvatar(
+            backgroundImage:
+                CachedNetworkImageProvider("http://i.pravatar.cc/300"),
+            backgroundColor: Colors.black,
+          ),
+          title: GestureDetector(
+            onTap: () => print("Show Profile"),
+            child: Text(
+              user.name,
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
             ),
-            title: GestureDetector(
-              onTap: () => print("Show Profile"),
-              child: Text(
-                user.name,
-                style:
-                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-              ),
-            ),
-            trailing: //isPostOwner
-                // ?
-                IconButton(
-              icon: Icon(
-                Icons.more_vert,
-                color: Colors.black,
-              ),
-              onPressed: () => print("deleted"),
-            )
-            // : Text(""),
-            );
+          ),
+          trailing: isPostOwner
+              ? IconButton(
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: Colors.black,
+                  ),
+                  onPressed: () => print("deleted"),
+                )
+              : Text(""),
+        );
       },
     );
   }
@@ -279,13 +287,13 @@ class _PostState extends State<Post> {
 
   //get User Id
 
-  Future<String> getUserId() async {
-    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+  // Future<String> getUserId() async {
+  //   FirebaseUser user = await FirebaseAuth.instance.currentUser();
 
-    print('my uid' + user.uid);
+  //   print('my uid' + user.uid);
 
-    print('my email' + user.email);
+  //   print('my email' + user.email);
 
-    return user.uid;
-  }
+  //   return user.uid;
+  // }
 }

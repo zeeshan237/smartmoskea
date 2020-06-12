@@ -17,6 +17,21 @@ class forum extends StatefulWidget {
 }
 
 class _forumState extends State<forum> {
+// Forum code from favortie icon Start
+  updateDetails() {
+    setState(() {});
+  }
+
+  _forumState() {
+    userCurrentID().then((value) {
+      if (value != null) {
+        this.accountID = value;
+        updateDetails();
+      }
+    });
+  }
+  // Forum code from favortie icon End
+
   //FirebaseUser user = await FirebaseAuth.instance.currentUser();
   int selectPage = 0;
   final List<String> category = [
@@ -33,11 +48,14 @@ class _forumState extends State<forum> {
   //   return user;
   // }
   User currentUser;
+  // Forum code from favortie icon Start
+  String accountID = "";
+  // Forum code from favortie icon End
 
   Widget callPage(int index) {
     switch (index) {
       case 0:
-        return HomeMsg();
+        return HomeMsg(userProfileId: accountID);
       //  Navigator.push(context, MaterialPageRoute(builder: (context) {
       //  return new UploadPhotoPage();
       //  }));
@@ -106,4 +124,18 @@ class _forumState extends State<forum> {
       ))
     ]);
   }
+
+  // Forum code from favortie icon Start
+
+  Future<String> userCurrentID() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    print('you are' + user.uid);
+    print('your email' + user.email);
+
+    //uuuser.get;
+    //final String email = user.uid.toString();
+    return user.uid;
+  }
+
+  // Forum code from favortie icon End
 }

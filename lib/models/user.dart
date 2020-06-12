@@ -8,6 +8,7 @@ class User {
   final String url;
   final String email;
   final String password;
+  final int catogery;
 
   User({
     this.id,
@@ -15,15 +16,16 @@ class User {
     this.url,
     this.email,
     this.password,
+    this.catogery,
   });
 
   factory User.fromDocument(DocumentSnapshot doc) {
     return User(
-      id: doc.documentID,
-      name: doc['name'],
-      email: doc['email'],
-      password: doc['password'],
-      url: doc['url'],
-    );
+        id: doc.documentID,
+        name: doc['name'],
+        email: doc['email'],
+        password: doc['password'],
+        url: doc['url'],
+        catogery: doc['catogery']);
   }
 }

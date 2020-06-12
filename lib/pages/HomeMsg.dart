@@ -12,6 +12,9 @@ import 'package:smart_moskea/models/user.dart';
 import 'package:smart_moskea/pages/answered.dart';
 import 'package:smart_moskea/pages/favorite.dart';
 import 'package:smart_moskea/pages/loggedInMainScreen.dart';
+import 'package:smart_moskea/widgets/PostTileWidget.dart';
+import 'package:smart_moskea/widgets/postWidget.dart';
+import 'package:smart_moskea/widgets/progress.dart';
 
 final StorageReference storageReference =
     FirebaseStorage.instance.ref().child("Post Pictures");
@@ -20,9 +23,12 @@ final postsReference = Firestore.instance.collection("posts");
 //upload page
 
 class HomeMsg extends StatefulWidget {
-  final User gCurrentUser;
-  HomeMsg({this.gCurrentUser});
-
+  // final User gCurrentUser;
+  // HomeMsg({this.gCurrentUser});
+// Forum code from favortie icon Start
+  final String userProfileId;
+  HomeMsg({this.userProfileId});
+// Forum code from favortie icon End
   @override
   _HomeMsg createState() => _HomeMsg();
 }
@@ -30,11 +36,46 @@ class HomeMsg extends StatefulWidget {
 class _HomeMsg extends State<HomeMsg> {
 //Needs Integration captureImageWithCamera method
 
+// Forum code from favortie icon Start
+  bool loading = false;
+  int countPost = 0;
+  List<Post> postsList = [];
+  String postOrientation = "list";
+// Forum code from favortie icon End
+
+  // Forum code from favortie icon Start
+
+  // Forum code from favortie icon End
   File file;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Forum code from favortie icon Start
+
+      body: FutureBuilder<bool>(
+          future: getAllProfilePosts(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData || !snapshot.data) return circularProgress();
+            return ListView(
+              children: <Widget>[
+                // buildProfileHeader(),
+                createListAndGridPostOrientation(),
+                Divider(
+                  height: 10.0,
+                ),
+                displayProfilePost(),
+                // Divider(),
+                // buildTogglePostOrientation(),
+                // Divider(
+                //   height: 0.0,
+                // ),
+                //  buildProfilePosts(),
+              ],
+            );
+          }),
+
+      // Forum code from favortie icon End
       floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.deepOrangeAccent,
           child: Icon(Icons.add),
@@ -52,6 +93,102 @@ class _HomeMsg extends State<HomeMsg> {
           ),
     );
   }
+
+  // Forum code from favortie icon Start
+  // display post from post widget to profile
+  displayProfilePost() {
+    if (postsList.isEmpty) {
+      print("List Empty hai");
+      return Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(30.0),
+              child: Icon(
+                Icons.photo_library,
+                color: Colors.grey,
+                size: 200.0,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 20.0),
+              child: Text(
+                "No Posts",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 40.0,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else if (postOrientation == "grid") {
+      List<GridTile> gridTilesList = [];
+      postsList.forEach((eachPost) {
+        gridTilesList.add(GridTile(child: PostTile(eachPost)));
+      });
+      return GridView.count(
+        crossAxisCount: 3,
+        childAspectRatio: 1.0,
+        mainAxisSpacing: 1.5,
+        crossAxisSpacing: 1.5,
+        shrinkWrap: true,
+        //physics: NeverScrollableScrollPhysics(),
+        children: gridTilesList,
+      );
+    } else if (postOrientation == "list") {
+      return Column(
+        children: postsList,
+      );
+    }
+  }
+
+  Future<bool> getAllProfilePosts() async {
+    if (postsList.isNotEmpty) return true;
+    QuerySnapshot querySnapshot = await postsReference
+        .document(widget.userProfileId)
+        .collection("usersPosts")
+        .orderBy("timestamp", descending: true)
+        .getDocuments();
+    countPost = querySnapshot.documents.length;
+    postsList = querySnapshot.documents
+        .map((documentSnapshot) => Post.fromDocument(documentSnapshot))
+        .toList();
+    return true;
+  }
+
+  // create createListAndGridPostOrientation
+  createListAndGridPostOrientation() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        IconButton(
+          onPressed: () => setOrientation("list"),
+          icon: Icon(Icons.list),
+          color: postOrientation == "list"
+              ? Theme.of(context).primaryColor
+              : Colors.grey,
+        ),
+        IconButton(
+          onPressed: () => setOrientation("grid"),
+          icon: Icon(Icons.grid_on),
+          color: postOrientation == "grid"
+              ? Theme.of(context).primaryColor
+              : Colors.grey,
+        ),
+      ],
+    );
+  }
+
+  setOrientation(String orientation) {
+    setState(() {
+      this.postOrientation = orientation;
+    });
+  }
+
+  // Forum code from favortie icon End
 
 // //Text Editing Controller
 //   TextEditingController descriptionTextEditingController =

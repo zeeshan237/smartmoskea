@@ -17,7 +17,7 @@ class _ProfilePageState extends State<ProfilePage> {
   bool loading = false;
   int countPost = 0;
   List<Post> postsList = [];
-  String postOrientation = "grid";
+  String postOrientation = "list";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,6 +75,10 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
       );
+    } else if (postOrientation == "list") {
+      return Column(
+        children: postsList,
+      );
     } else if (postOrientation == "grid") {
       List<GridTile> gridTilesList = [];
       postsList.forEach((eachPost) {
@@ -89,24 +93,40 @@ class _ProfilePageState extends State<ProfilePage> {
         //physics: NeverScrollableScrollPhysics(),
         children: gridTilesList,
       );
-    } else if (postOrientation == "list") {
-      return Column(
-        children: postsList,
-      );
     }
   }
 
   Future<bool> getAllProfilePosts() async {
     if (postsList.isNotEmpty) return true;
-    QuerySnapshot querySnapshot = await postsReference
-        .document(widget.userProfileId)
-        .collection("usersPosts")
-        .orderBy("timestamp", descending: true)
-        .getDocuments();
-    countPost = querySnapshot.documents.length;
-    postsList = querySnapshot.documents
-        .map((documentSnapshot) => Post.fromDocument(documentSnapshot))
-        .toList();
+    List documentIdList = [];
+    // QuerySnapshot snapshot =
+    //     await Firestore.instance.collection('users').getDocuments();
+    DocumentReference documentReference =
+        Firestore.instance.collection('posts').document();
+    var respectsQuery = Firestore.instance.collection('posts');
+    var postDocLength = await respectsQuery.getDocuments();
+    for (int i = 0; i < postDocLength.documents.length; i++) {
+      documentIdList.add(documentReference.documentID);
+    }
+    // snapshot.documents.forEach((element) {
+    //   for (int i = 0; i < element.data.length; i++)
+    //     documentIdList.add( documentReference.documentID)
+    //     //(element.data[i]['uid']);
+    // });
+
+    //var postList = [];
+
+    for (int i = 0; i < documentIdList.length; i++) {
+      QuerySnapshot querySnapshot = await postsReference
+          .document(documentIdList[i])
+          .collection("usersPosts")
+          .orderBy("timestamp", descending: true)
+          .getDocuments();
+      countPost = querySnapshot.documents.length;
+      postsList = querySnapshot.documents
+          .map((documentSnapshot) => Post.fromDocument(documentSnapshot))
+          .toList();
+    }
     return true;
   }
 
@@ -116,16 +136,16 @@ class _ProfilePageState extends State<ProfilePage> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         IconButton(
-          onPressed: () => setOrientation("grid"),
-          icon: Icon(Icons.grid_on),
-          color: postOrientation == "grid"
+          onPressed: () => setOrientation("list"),
+          icon: Icon(Icons.list),
+          color: postOrientation == "list"
               ? Theme.of(context).primaryColor
               : Colors.grey,
         ),
         IconButton(
-          onPressed: () => setOrientation("list"),
-          icon: Icon(Icons.list),
-          color: postOrientation == "list"
+          onPressed: () => setOrientation("grid"),
+          icon: Icon(Icons.grid_on),
+          color: postOrientation == "grid"
               ? Theme.of(context).primaryColor
               : Colors.grey,
         ),

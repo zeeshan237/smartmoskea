@@ -251,3 +251,30 @@ class _LoggedInMainScreenState extends State<LoggedInMainScreen> {
     return ds.data['name'];
   }
 }
+
+// Future<bool> getAllProfilePosts() async {
+//     if (postsList.isNotEmpty) return true;
+//     List documentIdList = [];
+//     QuerySnapshot snapshot =
+//         await Firestore.instance.collection('users').getDocuments();
+
+//     snapshot.documents.forEach((element) {
+//       for (int i = 0; i < element.data.length; i++)
+//         documentIdList.add(element.data[i]['uid']);
+//     });
+
+//     //var postList = [];
+
+//     for (int i = 0; i < documentIdList.length; i++) {
+//       QuerySnapshot querySnapshot = await postsReference
+//           .document(documentIdList[i])
+//           .collection("usersPosts")
+//           .orderBy("timestamp", descending: true)
+//           .getDocuments();
+//       countPost = querySnapshot.documents.length;
+//       postsList = querySnapshot.documents
+//           .map((documentSnapshot) => Post.fromDocument(documentSnapshot))
+//           .toList();
+//     }
+//     return true;
+//   }

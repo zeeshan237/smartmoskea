@@ -18,7 +18,6 @@ class _userProfileState extends State<userProfile> {
   updateDetails() {
     setState(() {});
   }
-
   String accountEmail = "";
   String accountName = "";
 
@@ -42,9 +41,6 @@ class _userProfileState extends State<userProfile> {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     print('you are' + user.uid);
     print('your email' + user.email);
-
-    //uuuser.get;
-    //final String email = user.uid.toString();
     return user.email;
   }
 
