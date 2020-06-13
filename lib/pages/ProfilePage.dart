@@ -96,39 +96,111 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  // Future<bool> getAllProfilePosts() async {
+  //   QuerySnapshot querySnapshot = await postsReference.getDocuments();
+  //   for (int i = 0; i < querySnapshot.documents.length; i++) {
+  //     var document = querySnapshot.documents[i];
+  //     var userPosts = document.reference.collection("usersPosts");
+  //     QuerySnapshot postsSnapshot =
+  //         await userPosts.orderBy("timestamp", descending: true).getDocuments();
+  //     countPost = postsSnapshot.documents.length;
+  //     postsList = postsSnapshot.documents
+  //         .map((document) => Post.fromDocument(document))
+  //         .toList();
+  //   }
+  //   return true;
+  // }
+
+// gora code 2 this one is working code just ascending order is issue
   Future<bool> getAllProfilePosts() async {
-    if (postsList.isNotEmpty) return true;
-    List documentIdList = [];
-    // QuerySnapshot snapshot =
-    //     await Firestore.instance.collection('users').getDocuments();
-    DocumentReference documentReference =
-        Firestore.instance.collection('posts').document();
-    var respectsQuery = Firestore.instance.collection('posts');
-    var postDocLength = await respectsQuery.getDocuments();
-    for (int i = 0; i < postDocLength.documents.length; i++) {
-      documentIdList.add(documentReference.documentID);
-    }
-    // snapshot.documents.forEach((element) {
-    //   for (int i = 0; i < element.data.length; i++)
-    //     documentIdList.add( documentReference.documentID)
-    //     //(element.data[i]['uid']);
-    // });
-
-    //var postList = [];
-
-    for (int i = 0; i < documentIdList.length; i++) {
-      QuerySnapshot querySnapshot = await postsReference
-          .document(documentIdList[i])
+    QuerySnapshot querySnapshot =
+        await Firestore.instance.collection("users").getDocuments();
+    for (DocumentSnapshot documentSnapshot in querySnapshot.documents) {
+      QuerySnapshot userPosts = await postsReference
+          .document(documentSnapshot.documentID)
           .collection("usersPosts")
           .orderBy("timestamp", descending: true)
           .getDocuments();
-      countPost = querySnapshot.documents.length;
-      postsList = querySnapshot.documents
-          .map((documentSnapshot) => Post.fromDocument(documentSnapshot))
-          .toList();
+      postsList.addAll(userPosts.documents
+          .map((documentSnapshot) => Post.fromDocument(documentSnapshot)));
     }
+    countPost = postsList.length;
+    print("all users post count: $countPost");
     return true;
   }
+
+//gora code
+
+  // Future<bool> getAllProfilePosts() async {
+  //   if (postsList.isNotEmpty) return true;
+  //   QuerySnapshot querySnapshot = await postsReference.getDocuments();
+  //   for (DocumentSnapshot documentSnapshot in querySnapshot.documents) {
+  //     QuerySnapshot userPosts = await postsReference
+  //         .document(documentSnapshot.documentID)
+  //         .collection("usersPosts")
+  //         .orderBy("timestamp", descending: true)
+  //         .getDocuments();
+  //     postsList.addAll(userPosts.documents
+  //         .map((documentSnapshot) => Post.fromDocument(documentSnapshot)));
+
+  //     // if (userPosts == null) {
+  //     //   print(" post List is empty:" + userPosts);
+  //     // } else {
+  //     //   print("post List is not empty");
+  //     // }
+  //   }
+  //   countPost = postsList.length;
+  //   print("all users post count: $countPost");
+  //   //}
+  //   return true;
+  // }
+
+// // last time checking
+//   Future<bool> getAllProfilePosts() async {
+//     if (postsList.isNotEmpty) return true;
+//     List documentIdList = [];
+
+//     var respectsQuery = Firestore.instance.collection('posts');
+//     var postDocLength = await respectsQuery.getDocuments();
+//     for (int i = 0; i < postDocLength.documents.length; i++) {
+//       documentIdList.add(postDocLength.documents[i].documentID);
+//       print("print document id" + postDocLength.documents[i].documentID);
+//     }
+
+//     for (int i = 0; i < documentIdList.length; i++) {
+//       QuerySnapshot querySnapshot = await postsReference
+//           .document(documentIdList[i])
+//           .collection("usersPosts")
+//           .orderBy("timestamp", descending: true)
+//           .getDocuments();
+
+//       postsList = querySnapshot.documents
+//           .map((documentSnapshot) => Post.fromDocument(documentSnapshot))
+//           .toList();
+//     }
+//     countPost = postsList.length;
+//     print("all users post count: $countPost");
+//     print(documentIdList.length);
+//     return true;
+//   }
+
+  // //working but small confusion end
+
+  // Future<bool> getAllProfilePosts() async {
+  //   QuerySnapshot querySnapshot = await postsReference.getDocuments();
+  //   for (int i = 0; i < querySnapshot.documents.length; i++) {
+  //     var document = querySnapshot.documents[i];
+  //     var userPosts = document.reference
+  //         .collection("usersPosts")
+  //         .orderBy("timestamp", descending: true)
+  //         .getDocuments();
+  //     countPost = querySnapshot.documents.length;
+  //     postsList = querySnapshot.documents
+  //         .map((documentSnapshot) => Post.fromDocument(documentSnapshot))
+  //         .toList();
+  //   }
+  //   return true;
+  // }
 
   // create createListAndGridPostOrientation
   createListAndGridPostOrientation() {
