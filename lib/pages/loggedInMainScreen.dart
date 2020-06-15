@@ -172,7 +172,7 @@ class _LoggedInMainScreenState extends State<LoggedInMainScreen> {
                 trailing: new Icon(Icons.exit_to_app),
                 title: new Text("Logout"),
                 onTap: () {
-                  AuthServices().signOut();
+                  AuthServices().signOut(context);
                 },
               ),
             ],

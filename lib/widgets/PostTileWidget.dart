@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
-
+import 'package:smart_moskea/pages/PostScreenPage.dart';
 import 'package:smart_moskea/widgets/postWidget.dart';
 
 class PostTile extends StatelessWidget {
   final Post post;
   PostTile(this.post);
 
-  // showPost(context) {
-  //   Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //           builder: (context) => PostScreen(
-  //                 postId: this.post.postId,
-  //                 userId: this.post.ownerId,
-  //               )));
-  // }
+//New code 13-june grid open image
+  displayFullPost(context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => PostScreenPage(
+                  postId: post.postId,
+                  userId: post.ownerId,
+                )));
+  }
 
+// New code 13-june grid open image end
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTap: () => displayFullPost(context),
       child: Image.network(post.url),
     );
     // return GestureDetector(

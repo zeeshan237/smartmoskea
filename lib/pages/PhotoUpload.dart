@@ -12,6 +12,8 @@ import '../widgets/progress.dart';
 final StorageReference storageReference =
     FirebaseStorage.instance.ref().child("Post Pictures");
 final postsReference = Firestore.instance.collection("posts");
+final activityFeedReference = Firestore.instance.collection("feed");
+final commentsReference = Firestore.instance.collection("comments");
 
 class UploadPhotoPage extends StatefulWidget {
   State<StatefulWidget> createState() => _UploadPhotoPageState();
@@ -197,6 +199,20 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
       "likes": {},
     });
   }
+
+  // // send to firestore with new modifing discord app
+  // savePostInfoToFirestore({String url, String description}) {
+  //   postsReference.document(postId).setData({
+  //     "postId": postId,
+  //     "ownerId": accountId,
+  //     "username": accountName,
+  //     "url": url,
+  //     "email": accountEmail,
+  //     "description": description,
+  //     "timestamp": timestamp,
+  //     "likes": {},
+  //   });
+  // }
 
 // method for uploadImage
   Future<String> uploadPhoto(mImageFile) async {

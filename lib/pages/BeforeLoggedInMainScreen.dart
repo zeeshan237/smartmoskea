@@ -5,8 +5,6 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_moskea/ui/login_page.dart';
 
-
-
 class BeforeLoggedInMainScreen extends StatefulWidget {
   BeforeLoggedInMainScreen({Key key, this.title}) : super(key: key);
 
@@ -22,23 +20,28 @@ class BeforeLoggedInMainScreen extends StatefulWidget {
   final String title;
 
   @override
-  _BeforeLoggedInMainScreenState createState() => _BeforeLoggedInMainScreenState();
+  _BeforeLoggedInMainScreenState createState() =>
+      _BeforeLoggedInMainScreenState();
 }
 
 class _BeforeLoggedInMainScreenState extends State<BeforeLoggedInMainScreen> {
   int _counter = 0;
-  int _current=1;
+  int _current = 1;
 
-  Widget callPage(int index)
-  {
-    switch(index)
-    {
-      case 0: return qibla_direction();
-      case 1: return Theme(data: Theme.of(context).copyWith(canvasColor: Colors.transparent), child:map());
-      case 2: return LoginPage();
-    //  case 4: return user_profile();
+  Widget callPage(int index) {
+    switch (index) {
+      case 0:
+        return qibla_direction();
+      case 1:
+        return Theme(
+            data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
+            child: map());
+      case 2:
+        return LoginPage();
+      //  case 4: return user_profile();
     }
   }
+
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -56,44 +59,39 @@ class _BeforeLoggedInMainScreenState extends State<BeforeLoggedInMainScreen> {
       backgroundColor: Theme.of(context).primaryColor,
       appBar: new AppBar(
         backgroundColor: Colors.deepOrangeAccent,
-      //  leading: new Icon(Icons.menu),
-       title: new Text(
-         "Smart Moskea",
-         style: TextStyle(
-           fontSize: 28.0,
+        //  leading: new Icon(Icons.menu),
+        title: new Text(
+          "Smart Moskea",
+          style: TextStyle(
+            fontSize: 28.0,
             fontWeight: FontWeight.bold,
-
-         ),
-       ),
-       elevation: 0.0,
-       actions: <Widget>[
-         IconButton(
-           icon: Icon(
-             Icons.notifications,
-             color: Colors.white,
-           ),
-           onPressed: () {
-             Navigator.of(context).push(
-               MaterialPageRoute(builder: (context)=>notification())
-             );
-           },
-         ),
-           ],
-         ),
+          ),
+        ),
+        elevation: 0.0,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.notifications,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => notification()));
+            },
+          ),
+        ],
+      ),
       drawer: new Drawer(
-
         child: new ListView(
           children: <Widget>[
-             new UserAccountsDrawerHeader(
+            new UserAccountsDrawerHeader(
               accountName: new Text("Ahmad Hassan"),
               accountEmail: new Text("ahmadhassan136@gmail.com"),
-            
-            decoration: BoxDecoration(
-              color: Colors.deepOrangeAccent
+              decoration: BoxDecoration(color: Colors.deepOrangeAccent),
+              currentAccountPicture: new CircleAvatar(
+                backgroundImage: new NetworkImage("http://i.pravatar.cc/300"),
+              ),
             ),
-            currentAccountPicture: new CircleAvatar(
-              backgroundImage: new NetworkImage("http://i.pravatar.cc/300"),
-            ),),
             new ListTile(
               trailing: new Icon(Icons.settings),
               title: new Text("Settings"),
@@ -103,7 +101,6 @@ class _BeforeLoggedInMainScreenState extends State<BeforeLoggedInMainScreen> {
               trailing: new Icon(Icons.exit_to_app),
               title: new Text("Logout"),
             ),
-
           ],
         ),
       ),
@@ -113,15 +110,15 @@ class _BeforeLoggedInMainScreenState extends State<BeforeLoggedInMainScreen> {
         height: 50,
         backgroundColor: Colors.white,
         color: Colors.deepOrangeAccent,
-          items: <Widget>[
-            Icon(Icons.directions,size: 30,color: Colors.black),
-            Icon(Icons.add,size: 30,color: Colors.black),
-            Icon(Icons.person,size: 30,color: Colors.black),
-          ],
+        items: <Widget>[
+          Icon(Icons.directions, size: 30, color: Colors.black),
+          Icon(Icons.add, size: 30, color: Colors.black),
+          Icon(Icons.person, size: 30, color: Colors.black),
+        ],
         index: 1,
-        onTap: (index){
+        onTap: (index) {
           setState(() {
-            _current=index;
+            _current = index;
           });
         },
       ),

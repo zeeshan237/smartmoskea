@@ -26,6 +26,35 @@ class _ProfilePageState extends State<ProfilePage> {
           future: getAllProfilePosts(),
           builder: (context, snapshot) {
             if (!snapshot.hasData || !snapshot.data) return circularProgress();
+            // if (postsList.isEmpty) {
+            //   print("List Empty hai");
+            //   return Container(
+            //     child: Column(
+            //       mainAxisAlignment: MainAxisAlignment.center,
+            //       children: <Widget>[
+            //         Padding(
+            //           padding: EdgeInsets.all(30.0),
+            //           child: Icon(
+            //             Icons.photo_library,
+            //             color: Colors.grey,
+            //             size: 200.0,
+            //           ),
+            //         ),
+            //         Padding(
+            //           padding: EdgeInsets.only(top: 20.0),
+            //           child: Text(
+            //             "No Posts",
+            //             style: TextStyle(
+            //                 color: Colors.black,
+            //                 fontSize: 40.0,
+            //                 fontWeight: FontWeight.bold),
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   );
+            // }
+
             return ListView(
               children: <Widget>[
                 // buildProfileHeader(),
@@ -48,34 +77,35 @@ class _ProfilePageState extends State<ProfilePage> {
 
 // display post from post widget to profile
   displayProfilePost() {
-    if (postsList.isEmpty) {
-      print("List Empty hai");
-      return Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(30.0),
-              child: Icon(
-                Icons.photo_library,
-                color: Colors.grey,
-                size: 200.0,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 20.0),
-              child: Text(
-                "No Posts",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 40.0,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
-        ),
-      );
-    } else if (postOrientation == "list") {
+    // if (postsList.isEmpty) {
+    //   print("List Empty hai");
+    //   return Container(
+    //     child: Column(
+    //       mainAxisAlignment: MainAxisAlignment.center,
+    //       children: <Widget>[
+    //         Padding(
+    //           padding: EdgeInsets.all(30.0),
+    //           child: Icon(
+    //             Icons.photo_library,
+    //             color: Colors.grey,
+    //             size: 200.0,
+    //           ),
+    //         ),
+    //         Padding(
+    //           padding: EdgeInsets.only(top: 20.0),
+    //           child: Text(
+    //             "No Posts",
+    //             style: TextStyle(
+    //                 color: Colors.black,
+    //                 fontSize: 40.0,
+    //                 fontWeight: FontWeight.bold),
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   );
+    // } else
+    if (postOrientation == "list") {
       return Column(
         children: postsList,
       );
@@ -115,20 +145,46 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<bool> getAllProfilePosts() async {
     QuerySnapshot querySnapshot =
         await Firestore.instance.collection("users").getDocuments();
+    postsList.clear();
     for (DocumentSnapshot documentSnapshot in querySnapshot.documents) {
       QuerySnapshot userPosts = await postsReference
           .document(documentSnapshot.documentID)
           .collection("usersPosts")
           .orderBy("timestamp", descending: true)
           .getDocuments();
+
       postsList.addAll(userPosts.documents
           .map((documentSnapshot) => Post.fromDocument(documentSnapshot)));
     }
     countPost = postsList.length;
+
     print("all users post count: $countPost");
     return true;
   }
 
+  // Future<bool> getAllProfilePosts() async {
+  //   postsList.clear();
+  //   QuerySnapshot querySnapshot = await Firestore.instance
+  //       .collection("posts")
+  //       .orderBy("timestamp", descending: true)
+  //       .getDocuments();
+
+  //   for (DocumentSnapshot documentSnapshot in querySnapshot.documents) {
+  //     postsList.add(Post.fromDocument(documentSnapshot));
+  //   }
+  //   // for (DocumentSnapshot documentSnapshot in querySnapshot.documents) {
+  //   //   QuerySnapshot userPosts = await postsReference
+  //   //       .document()
+  //   //       .collection(documentSnapshot.documentID)
+  //   //       // .orderBy("timestamp", descending: true)
+  //   //       .getDocuments();
+  //   //   postsList.addAll(userPosts.documents
+  //   //       .map((documentSnapshot) => Post.fromDocument(documentSnapshot)));
+  //   // }
+  //   countPost = postsList.length;
+  //   print("all users post count: $countPost");
+  //   return true;
+  // }
 //gora code
 
   // Future<bool> getAllProfilePosts() async {

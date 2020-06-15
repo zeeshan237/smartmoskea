@@ -6,13 +6,15 @@ import 'package:smart_moskea/ui/login_page.dart';
 class AuthServices {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  void signOut() {
+  void signOut(context) {
     FirebaseAuth.instance.signOut();
     //FirebaseUser user = FirebaseAuth.instance.currentUser;
     //print('$user');
-    runApp(new MaterialApp(
-      home: new BeforeLoggedInMainScreen(),
-    ));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => BeforeLoggedInMainScreen()));
+    // runApp(new MaterialApp(
+    //   home: new BeforeLoggedInMainScreen(),
+    // ));
   }
 
 //   handleAuth()

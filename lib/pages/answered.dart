@@ -26,7 +26,7 @@ class _answeredState extends State<answered> {
           subtitle: new Text("1 hour ago"),
           trailing: IconButton(
               icon: Icon(Icons.thumb_up),
-              color: (isPressed1 == true) ? Colors.blue : Colors.black12,
+              color: (isPressed1 == true) ? Colors.white : Colors.black12,
               onPressed: () {
                 setState(() {
                   if (isPressed1) {

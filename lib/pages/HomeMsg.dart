@@ -20,6 +20,7 @@ final StorageReference storageReference =
     FirebaseStorage.instance.ref().child("Post Pictures");
 final usersRef = Firestore.instance.collection('users');
 final postsReference = Firestore.instance.collection("posts");
+
 //upload page
 
 class HomeMsg extends StatefulWidget {
@@ -56,6 +57,7 @@ class _HomeMsg extends State<HomeMsg> {
       body: FutureBuilder<bool>(
           future: getAllProfilePosts(),
           builder: (context, snapshot) {
+            //  print(postsList[0].timestamp);
             if (!snapshot.hasData || !snapshot.data) return circularProgress();
             return ListView(
               children: <Widget>[
@@ -135,6 +137,7 @@ class _HomeMsg extends State<HomeMsg> {
         mainAxisSpacing: 1.5,
         crossAxisSpacing: 1.5,
         shrinkWrap: true,
+
         //physics: NeverScrollableScrollPhysics(),
         children: gridTilesList,
       );
@@ -146,18 +149,46 @@ class _HomeMsg extends State<HomeMsg> {
   }
 
   Future<bool> getAllProfilePosts() async {
-    if (postsList.isNotEmpty) return true;
-    QuerySnapshot querySnapshot = await postsReference
-        .document(widget.userProfileId)
-        .collection("usersPosts")
+    // postsList.clear();
+    QuerySnapshot querySnapshot = await Firestore.instance
+        .collection("posts")
         .orderBy("timestamp", descending: true)
         .getDocuments();
-    countPost = querySnapshot.documents.length;
-    postsList = querySnapshot.documents
-        .map((documentSnapshot) => Post.fromDocument(documentSnapshot))
-        .toList();
+    //  postsList.clear();
+
+    for (DocumentSnapshot documentSnapshot in querySnapshot.documents) {
+      postsList.add(Post.fromDocument(documentSnapshot));
+    }
+    // for (DocumentSnapshot documentSnapshot in querySnapshot.documents) {
+    //   QuerySnapshot userPosts = await postsReference
+    //       .document()
+    //       .collection(documentSnapshot.documentID)
+    //       // .orderBy("timestamp", descending: true)
+    //       .getDocuments();
+    //   postsList.addAll(userPosts.documents
+    //       .map((documentSnapshot) => Post.fromDocument(documentSnapshot)));
+    // }
+    countPost = postsList.length;
+    print("all users post count: $countPost");
     return true;
   }
+
+// working code with particular user id start
+  // Future<bool> getAllProfilePosts() async {
+  //   if (postsList.isNotEmpty) return true;
+  //   QuerySnapshot querySnapshot = await postsReference
+  //       .document(widget.userProfileId)
+  //       .collection("usersPosts")
+  //       .orderBy("timestamp", descending: true)
+  //       .getDocuments();
+  //   countPost = querySnapshot.documents.length;
+  //   postsList = querySnapshot.documents
+  //       .map((documentSnapshot) => Post.fromDocument(documentSnapshot))
+  //       .toList();
+  //   return true;
+  // }
+
+  // working code with particular user id end
 
   // create createListAndGridPostOrientation
   createListAndGridPostOrientation() {
