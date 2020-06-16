@@ -157,25 +157,26 @@ class CommentsPageState extends State<CommentsPage> {
           ),
           Divider(),
           ListTile(
+            // height: 60.0,
             title: TextFormField(
               controller: commentTextEditingController,
               decoration: InputDecoration(
-                labelText: 'Write a comment....',
-                labelStyle: TextStyle(color: Colors.green),
-                enabledBorder: UnderlineInputBorder(
+                labelText: 'Write an Answer',
+                labelStyle: TextStyle(color: Colors.deepOrangeAccent),
+                enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey)),
-                focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.green)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.deepOrangeAccent)),
               ),
-              style: TextStyle(color: Colors.green),
+              style: TextStyle(color: Colors.black),
             ),
             trailing: OutlineButton(
               onPressed: saveComment,
-              borderSide: BorderSide.none,
+              borderSide: BorderSide(color: Colors.deepOrangeAccent),
               child: Text(
-                'Published',
+                'Post',
                 style: TextStyle(
-                    color: Colors.lightGreenAccent,
+                    color: Colors.deepOrangeAccent,
                     fontWeight: FontWeight.bold),
               ),
             ),

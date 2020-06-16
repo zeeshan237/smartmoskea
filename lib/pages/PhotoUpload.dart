@@ -4,6 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import "package:flutter/material.dart";
 import 'package:image_picker/image_picker.dart';
+import 'package:smart_moskea/pages/HomeMsg.dart';
+import 'package:smart_moskea/pages/forum.dart';
+import 'package:smart_moskea/pages/loggedInMainScreen.dart';
 import 'package:uuid/uuid.dart';
 import 'package:image/image.dart' as ImD;
 import 'package:path_provider/path_provider.dart';
@@ -84,8 +87,10 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
               builder: (context, snapshot) {
                 if (!snapshot.hasData) return circularProgress();
                 return sampleImage == null
-                    ? Text(
-                        "|      1:  Ask without Image      |      2:  Ask With Image      |")
+                    ? showUpload == false
+                        ? Text(
+                            "|      1:  Ask without Image      |      2:  Ask With Image      |")
+                        : enableUpload1()
                     : enableUpload();
               }),
         ),
@@ -123,6 +128,23 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
     });
   }
 
+// handle submit post only text
+  // controlUploadAndSave1() async {
+  //   setState(() {
+  //     uploading = true;
+  //   });
+  //   savePostInfoToFirestore1();
+
+  //   savePostInfoToFirestore1(
+  //       description: descriptionTextEditingController.text);
+  //   descriptionTextEditingController.clear();
+  //   setState(() {
+  //     //  sampleImage = null;
+  //     uploading = false;
+  //     postId = Uuid().v4();
+  //   });
+  // }
+
 // handle submit post
   controlUploadAndSave() async {
     setState(() {
@@ -137,6 +159,14 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
       sampleImage = null;
       uploading = false;
       postId = Uuid().v4();
+      Navigator.of(context).pop();
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              content: Text("Your Question is Successfully Uploaded"),
+            );
+          });
     });
   }
 
@@ -181,6 +211,26 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
   //   print(uid);
   //   //print(uemail);
   // }
+
+  // save post without image just only text
+  // send to firestore
+  savePostInfoToFirestore1({String description}) {
+    postsReference
+        .document(accountId)
+        .collection('usersPosts')
+        .document(postId)
+        .setData({
+      "postId": postId,
+      "ownerId": accountId,
+      "username": accountName,
+      // "url": url,
+      "email": accountEmail,
+      "description": description,
+      "timestamp": timestamp,
+      "likes": {},
+    });
+  }
+
   //String gettCurrentUser;
   // send to firestore
   savePostInfoToFirestore({String url, String description}) {
@@ -213,6 +263,71 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
   //     "likes": {},
   //   });
   // }
+
+//upload just description
+  Widget enableUpload1() {
+    print("enableupload1 called");
+    return new Container(
+        child: new Form(
+      key: formKey,
+      child: Column(
+        children: <Widget>[
+          uploading ? linearProgress() : Text(""),
+          SizedBox(
+            height: 15.0,
+          ),
+          TextFormField(
+            controller: descriptionTextEditingController,
+            decoration: new InputDecoration(labelText: 'Description'),
+            validator: (value) {
+              return value.isEmpty ? 'Description is required' : null;
+            },
+            onSaved: (value) {
+              return _myValue = value;
+            },
+          ),
+          SizedBox(
+            height: 15.0,
+          ),
+          RaisedButton(
+              elevation: 10.0,
+              child: Text("Add a New Post"),
+              textColor: Colors.white,
+              color: Colors.pink,
+              onPressed: () {
+                setState(() {
+                  uploading = true;
+                });
+
+                savePostInfoToFirestore1(
+                    description: descriptionTextEditingController.text);
+                descriptionTextEditingController.clear();
+                setState(() {
+                  //  sampleImage = null;
+                  uploading = false;
+                  postId = Uuid().v4();
+                });
+
+                //  uploading ? linearProgress() : Text("");
+                Navigator.of(context).pop();
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        content: Text("Your Question is Successfully Uploaded"),
+                      );
+                    });
+              }
+              // { validateAndSave;
+              // uploading ? null : () => controlUploadAndSave1(),
+              // }
+              )
+        ],
+      ),
+    ));
+    //   },
+    // );
+  }
 
 // method for uploadImage
   Future<String> uploadPhoto(mImageFile) async {
@@ -283,6 +398,8 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
     ));
   }
 
+  bool showUpload = false;
+
   // Needs integration takeImage method
   takeImage(mContext) {
     return showDialog(
@@ -302,7 +419,12 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
                     fontSize: 16.0,
                     fontWeight: FontWeight.bold),
               ),
-              //onPressed: (),
+              onPressed: () {
+                setState(() {
+                  showUpload = true;
+                  Navigator.of(context).pop();
+                });
+              },
             ),
             SimpleDialogOption(
               child: Text(

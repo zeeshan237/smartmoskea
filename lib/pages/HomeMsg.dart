@@ -64,7 +64,7 @@ class _HomeMsg extends State<HomeMsg> {
                 // buildProfileHeader(),
                 createListAndGridPostOrientation(),
                 Divider(
-                  height: 10.0,
+                  height: 5.0,
                 ),
                 displayProfilePost(),
                 // Divider(),
@@ -96,35 +96,39 @@ class _HomeMsg extends State<HomeMsg> {
     );
   }
 
-  // Forum code from favortie icon Start
-  // display post from post widget to profile
+  /// display post from post widget to profile
   displayProfilePost() {
-    if (postsList.isEmpty) {
-      print("List Empty hai");
-      return Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(30.0),
-              child: Icon(
-                Icons.photo_library,
-                color: Colors.grey,
-                size: 200.0,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 20.0),
-              child: Text(
-                "No Posts",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 40.0,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
-        ),
+    // if (postsList.isEmpty) {
+    //   print("List Empty hai");
+    //   return Container(
+    //     child: Column(
+    //       mainAxisAlignment: MainAxisAlignment.center,
+    //       children: <Widget>[
+    //         Padding(
+    //           padding: EdgeInsets.all(30.0),
+    //           child: Icon(
+    //             Icons.photo_library,
+    //             color: Colors.grey,
+    //             size: 200.0,
+    //           ),
+    //         ),
+    //         Padding(
+    //           padding: EdgeInsets.only(top: 20.0),
+    //           child: Text(
+    //             "No Posts",
+    //             style: TextStyle(
+    //                 color: Colors.black,
+    //                 fontSize: 40.0,
+    //                 fontWeight: FontWeight.bold),
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   );
+    // } else
+    if (postOrientation == "list") {
+      return Column(
+        children: postsList,
       );
     } else if (postOrientation == "grid") {
       List<GridTile> gridTilesList = [];
@@ -137,41 +141,57 @@ class _HomeMsg extends State<HomeMsg> {
         mainAxisSpacing: 1.5,
         crossAxisSpacing: 1.5,
         shrinkWrap: true,
-
         //physics: NeverScrollableScrollPhysics(),
         children: gridTilesList,
       );
-    } else if (postOrientation == "list") {
-      return Column(
-        children: postsList,
-      );
     }
   }
 
+  // gora code 2 this one is working code just ascending order is issue
   Future<bool> getAllProfilePosts() async {
-    // postsList.clear();
-    QuerySnapshot querySnapshot = await Firestore.instance
-        .collection("posts")
-        .orderBy("timestamp", descending: true)
-        .getDocuments();
-    //  postsList.clear();
-
+    QuerySnapshot querySnapshot =
+        await Firestore.instance.collection("users").getDocuments();
+    postsList.clear();
     for (DocumentSnapshot documentSnapshot in querySnapshot.documents) {
-      postsList.add(Post.fromDocument(documentSnapshot));
+      QuerySnapshot userPosts = await postsReference
+          .document(documentSnapshot.documentID)
+          .collection("usersPosts")
+          .orderBy("timestamp", descending: true)
+          .getDocuments();
+
+      postsList.addAll(userPosts.documents
+          .map((documentSnapshot) => Post.fromDocument(documentSnapshot)));
     }
-    // for (DocumentSnapshot documentSnapshot in querySnapshot.documents) {
-    //   QuerySnapshot userPosts = await postsReference
-    //       .document()
-    //       .collection(documentSnapshot.documentID)
-    //       // .orderBy("timestamp", descending: true)
-    //       .getDocuments();
-    //   postsList.addAll(userPosts.documents
-    //       .map((documentSnapshot) => Post.fromDocument(documentSnapshot)));
-    // }
     countPost = postsList.length;
+
     print("all users post count: $countPost");
     return true;
   }
+
+  // Future<bool> getAllProfilePosts() async {
+  //   // postsList.clear();
+  //   QuerySnapshot querySnapshot = await Firestore.instance
+  //       .collection("posts")
+  //       .orderBy("timestamp", descending: true)
+  //       .getDocuments();
+  //   //  postsList.clear();
+
+  //   for (DocumentSnapshot documentSnapshot in querySnapshot.documents) {
+  //     postsList.add(Post.fromDocument(documentSnapshot));
+  //   }
+  //   // for (DocumentSnapshot documentSnapshot in querySnapshot.documents) {
+  //   //   QuerySnapshot userPosts = await postsReference
+  //   //       .document()
+  //   //       .collection(documentSnapshot.documentID)
+  //   //       // .orderBy("timestamp", descending: true)
+  //   //       .getDocuments();
+  //   //   postsList.addAll(userPosts.documents
+  //   //       .map((documentSnapshot) => Post.fromDocument(documentSnapshot)));
+  //   // }
+  //   countPost = postsList.length;
+  //   print("all users post count: $countPost");
+  //   return true;
+  // }
 
 // working code with particular user id start
   // Future<bool> getAllProfilePosts() async {

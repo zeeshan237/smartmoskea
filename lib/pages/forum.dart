@@ -34,12 +34,7 @@ class _forumState extends State<forum> {
 
   //FirebaseUser user = await FirebaseAuth.instance.currentUser();
   int selectPage = 0;
-  final List<String> category = [
-    "Messages",
-    "Answered",
-    "Your Questions",
-    "Likes"
-  ];
+  final List<String> category = ["Forum", "My Questions", "Answered", "Likes"];
 
   //get current user
   // FirebaseAuth _firebaseAuth;
@@ -67,9 +62,10 @@ class _forumState extends State<forum> {
       //   userId: 'userId',
       //   onSignedOut: () {},
       case 1:
-        return answered();
+        return YourQuestion(userProfileId: accountID);
+
       case 2:
-        return your_questions();
+        return answered();
       case 3:
         return like_questions();
     }
@@ -79,7 +75,7 @@ class _forumState extends State<forum> {
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
       Container(
-        height: 90.0,
+        height: 60.0,
         color: Colors.deepOrangeAccent, //Theme.of(context).b,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
@@ -93,8 +89,8 @@ class _forumState extends State<forum> {
               },
               child: new Padding(
                 padding: EdgeInsets.symmetric(
-                  vertical: 30.0,
-                  horizontal: 20.0,
+                  vertical: 15.0,
+                  horizontal: 15.0,
                 ),
                 child: new Text(
                   category[index],
