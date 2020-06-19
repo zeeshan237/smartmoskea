@@ -20,13 +20,21 @@ class PostTile extends StatelessWidget {
 // New code 13-june grid open image end
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => displayFullPost(context),
-      child: Image.network(post.url),
-    );
-    // return GestureDetector(
-    //   onTap: () => showPost(context),
-    //   child: cachedNetworkImage(post.mediaUrl),
-    // );
+    if (post.url == "abc") {
+      return GestureDetector(
+        onTap: () => displayFullPost(context),
+        child: Image.network(
+            'https://responsewebrecruitment.co.uk/wp-content/uploads/2013/06/question-bubble.jpg'),
+      );
+    } else {
+      return GestureDetector(
+        onTap: () => displayFullPost(context),
+        child: Image.network(post.url),
+      );
+      // return GestureDetector(
+      //   onTap: () => showPost(context),
+      //   child: cachedNetworkImage(post.mediaUrl),
+      // );
+    }
   }
 }

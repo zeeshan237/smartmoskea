@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_moskea/pages/PhotoUpload.dart';
-import 'package:smart_moskea/widgets/header.dart';
 import 'package:smart_moskea/widgets/postWidget.dart';
 import 'package:smart_moskea/widgets/progress.dart';
 import 'package:smart_moskea/widgets/postTileWidget.dart';
@@ -120,7 +119,7 @@ class _ProfilePageState extends State<ProfilePage> {
         mainAxisSpacing: 1.5,
         crossAxisSpacing: 1.5,
         shrinkWrap: true,
-        //physics: NeverScrollableScrollPhysics(),
+        physics: NeverScrollableScrollPhysics(),
         children: gridTilesList,
       );
     }

@@ -142,7 +142,7 @@ class _YourQuestion extends State<YourQuestion> {
         mainAxisSpacing: 1.5,
         crossAxisSpacing: 1.5,
         shrinkWrap: true,
-        //physics: NeverScrollableScrollPhysics(),
+        physics: NeverScrollableScrollPhysics(),
         children: gridTilesList,
       );
     }

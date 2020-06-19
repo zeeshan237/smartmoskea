@@ -1,25 +1,18 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import "package:flutter/material.dart";
-import 'package:geolocator/geolocator.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:smart_moskea/pages/PhotoUpload.dart';
-import 'package:smart_moskea/models/user.dart';
-import 'package:smart_moskea/pages/answered.dart';
-import 'package:smart_moskea/pages/favorite.dart';
-import 'package:smart_moskea/pages/loggedInMainScreen.dart';
+import 'package:smart_moskea/utils/core.dart';
 import 'package:smart_moskea/widgets/PostTileWidget.dart';
 import 'package:smart_moskea/widgets/postWidget.dart';
 import 'package:smart_moskea/widgets/progress.dart';
 
-final StorageReference storageReference =
-    FirebaseStorage.instance.ref().child("Post Pictures");
-final usersRef = Firestore.instance.collection('users');
-final postsReference = Firestore.instance.collection("posts");
+// final StorageReference storageReference =
+//     FirebaseStorage.instance.ref().child("Post Pictures");
+// final usersRef = Firestore.instance.collection('users');
+// final postsReference = Firestore.instance.collection("posts");
 
 //upload page
 
@@ -28,7 +21,8 @@ class HomeMsg extends StatefulWidget {
   // HomeMsg({this.gCurrentUser});
 // Forum code from favortie icon Start
   final String userProfileId;
-  HomeMsg({this.userProfileId});
+  final int userCategory;
+  HomeMsg({this.userProfileId, this.userCategory});
 // Forum code from favortie icon End
   @override
   _HomeMsg createState() => _HomeMsg();
@@ -41,59 +35,107 @@ class _HomeMsg extends State<HomeMsg> {
   bool loading = false;
   int countPost = 0;
   List<Post> postsList = [];
+
   String postOrientation = "list";
-// Forum code from favortie icon End
-
-  // Forum code from favortie icon Start
-
-  // Forum code from favortie icon End
   File file;
+
+  updateDetails() {
+    setState(() {});
+  }
+
+  int currentOnlineUserCategory;
+  _HomeMsg() {
+    getUserCategory().then((value) {
+      this.currentOnlineUserCategory = value;
+      updateDetails();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // Forum code from favortie icon Start
+    postsList.clear();
+    if (currentOnlineUserCategory == 3) {
+      return Scaffold(
+        // Forum code from favortie icon Start
 
-      body: FutureBuilder<bool>(
-          future: getAllProfilePosts(),
-          builder: (context, snapshot) {
-            //  print(postsList[0].timestamp);
-            if (!snapshot.hasData || !snapshot.data) return circularProgress();
-            return ListView(
-              children: <Widget>[
-                // buildProfileHeader(),
-                createListAndGridPostOrientation(),
-                Divider(
-                  height: 5.0,
-                ),
-                displayProfilePost(),
-                // Divider(),
-                // buildTogglePostOrientation(),
-                // Divider(
-                //   height: 0.0,
-                // ),
-                //  buildProfilePosts(),
-              ],
-            );
-          }),
+        body: FutureBuilder<bool>(
+            future: getAllProfilePosts(),
+            builder: (context, snapshot) {
+              //  print(postsList[0].timestamp);
 
-      // Forum code from favortie icon End
-      floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.deepOrangeAccent,
-          child: Icon(Icons.add),
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return new UploadPhotoPage();
-            }));
-          }
+              if (!snapshot.hasData || !snapshot.data)
+                return circularProgress();
 
-          // file == null ? takeImage(context) : displayUploadFormScreen(),
-          //this on pressed when called takeImage will be called success but
-          //after image taken it should be displayUploadFormScreen() called but its not working, check this small issue so i will also judge your expertise then we will discuss project details budget and document
-          //add question here.
-          // r u there?????
-          ),
-    );
+              return ListView(
+                children: <Widget>[
+                  // buildProfileHeader(),
+                  createListAndGridPostOrientation(),
+                  Divider(
+                    height: 0.0,
+                    color: black,
+                  ),
+                  displayProfilePost(),
+                  // Divider(),
+                  // buildTogglePostOrientation(),
+                  // Divider(
+                  //   height: 0.0,
+                  // ),
+                  //  buildProfilePosts(),
+                ],
+              );
+            }),
+
+        // Forum code from favortie icon End
+      );
+    } else {
+      return Scaffold(
+        // Forum code from favortie icon Start
+
+        body: FutureBuilder<bool>(
+            future: getAllProfilePosts(),
+            builder: (context, snapshot) {
+              //  print(postsList[0].timestamp);
+
+              if (!snapshot.hasData || !snapshot.data)
+                return circularProgress();
+
+              return ListView(
+                children: <Widget>[
+                  // buildProfileHeader(),
+                  createListAndGridPostOrientation(),
+                  Divider(
+                    height: 0.0,
+                    color: black,
+                  ),
+                  displayProfilePost(),
+                  // Divider(),
+                  // buildTogglePostOrientation(),
+                  // Divider(
+                  //   height: 0.0,
+                  // ),
+                  //  buildProfilePosts(),
+                ],
+              );
+            }),
+
+        // Forum code from favortie icon End
+        floatingActionButton: FloatingActionButton(
+            backgroundColor: Colors.deepOrangeAccent,
+            child: Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return new UploadPhotoPage();
+              }));
+            }
+
+            // file == null ? takeImage(context) : displayUploadFormScreen(),
+            //this on pressed when called takeImage will be called success but
+            //after image taken it should be displayUploadFormScreen() called but its not working, check this small issue so i will also judge your expertise then we will discuss project details budget and document
+            //add question here.
+            // r u there?????
+            ),
+      );
+    }
   }
 
   /// display post from post widget to profile
@@ -135,13 +177,14 @@ class _HomeMsg extends State<HomeMsg> {
       postsList.forEach((eachPost) {
         gridTilesList.add(GridTile(child: PostTile(eachPost)));
       });
+
       return GridView.count(
         crossAxisCount: 3,
         childAspectRatio: 1.0,
         mainAxisSpacing: 1.5,
         crossAxisSpacing: 1.5,
         shrinkWrap: true,
-        //physics: NeverScrollableScrollPhysics(),
+        physics: NeverScrollableScrollPhysics(),
         children: gridTilesList,
       );
     }
@@ -149,6 +192,7 @@ class _HomeMsg extends State<HomeMsg> {
 
   // gora code 2 this one is working code just ascending order is issue
   Future<bool> getAllProfilePosts() async {
+    postsList.clear();
     QuerySnapshot querySnapshot =
         await Firestore.instance.collection("users").getDocuments();
     postsList.clear();
@@ -162,6 +206,7 @@ class _HomeMsg extends State<HomeMsg> {
       postsList.addAll(userPosts.documents
           .map((documentSnapshot) => Post.fromDocument(documentSnapshot)));
     }
+
     countPost = postsList.length;
 
     print("all users post count: $countPost");
@@ -237,6 +282,19 @@ class _HomeMsg extends State<HomeMsg> {
     setState(() {
       this.postOrientation = orientation;
     });
+  }
+
+//get User Category
+
+  Future<int> getUserCategory() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    DocumentSnapshot ds =
+        await Firestore.instance.collection('users').document(user.uid).get();
+    print('my uid' + user.uid);
+    print('my name' + ds.data['name']);
+    print('my email' + user.email);
+
+    return ds.data['catogery'];
   }
 
   // Forum code from favortie icon End

@@ -76,27 +76,34 @@ class CommentsPageState extends State<CommentsPage> {
   }
 
   saveComment() {
-    commentsReference.document(postId).collection('comments').add({
-      'name': currentOnlineUserName,
-      'comment': commentTextEditingController.text,
-      'timestamp': DateTime.now(),
-      // 'url': currentOnlineUserUrl,
-      'userId': currentOnlineUserId,
-    });
-    bool isNotCommentOwner = postOwnerId != currentOnlineUserId;
-    if (isNotCommentOwner) {
-      activityFeedReference.document(postOwnerId).collection('feedItems').add({
-        'type': 'comment',
-        'commentData': commentTextEditingController.text,
-        'timestamp': timestamp,
-        'postId': postId,
-        'username': currentOnlineUserName,
+    if (commentTextEditingController.text.isNotEmpty) {
+      commentsReference.document(postId).collection('comments').add({
+        'name': currentOnlineUserName,
+        'comment': commentTextEditingController.text,
+        'timestamp': DateTime.now(),
+        // 'url': currentOnlineUserUrl,
         'userId': currentOnlineUserId,
-        // 'userProfileImg': currentUser.photoUrl,
-        //"url": currentOnlineUserUrl,
       });
+      bool isNotCommentOwner = postOwnerId != currentOnlineUserId;
+      if (isNotCommentOwner) {
+        activityFeedReference
+            .document(postOwnerId)
+            .collection('feedItems')
+            .add({
+          'type': 'comment',
+          'commentData': commentTextEditingController.text,
+          'timestamp': timestamp,
+          'postId': postId,
+          'username': currentOnlineUserName,
+          'userId': currentOnlineUserId,
+          // 'userProfileImg': currentUser.photoUrl,
+          //"url": currentOnlineUserUrl,
+        });
+      }
+      commentTextEditingController.clear();
+    } else {
+      print('coment is empty');
     }
-    commentTextEditingController.clear();
   }
 
 //get User Id

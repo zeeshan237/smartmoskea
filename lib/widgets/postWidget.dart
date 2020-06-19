@@ -112,10 +112,16 @@ class _PostState extends State<Post> {
   }
 
   String currentOnlineUserId;
+  int currentOnlineUserCategory;
   void initState() {
     super.initState();
     getUserId().then((value) {
       currentOnlineUserId = value;
+      updateDetails();
+    });
+
+    getUserCategory().then((value) {
+      currentOnlineUserCategory = value;
       updateDetails();
     });
   }
@@ -125,14 +131,29 @@ class _PostState extends State<Post> {
     {
       isLiked = (likes[currentOnlineUserId] == true);
     }
+
     return Padding(
       padding: EdgeInsets.only(bottom: 12.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          Divider(
+            color: Colors.black,
+            height: 10.0,
+          ),
           createPostHead(),
+          // Divider(
+          //   // color: Colors.black,
+          //   height: 5.0,
+          // ),
+          // Divider(
+          //   // color: Colors.black,
+          //   height: 15.0,
+          // ),
+          createPostFooter(),
+
           createPostPicture(),
-          createPostFooter()
+          createPostFooterComentLike(),
         ],
       ),
     );
@@ -147,7 +168,7 @@ class _PostState extends State<Post> {
         }
         User user = User.fromDocument(dataSnapshot.data);
 
-        bool isPostOwner = user.id == ownerId && user.catogery == 1;
+        bool isPostOwner = user.id == ownerId || user.catogery == 2;
 
         return ListTile(
           leading: CircleAvatar(
@@ -242,13 +263,22 @@ class _PostState extends State<Post> {
         'likes.$currentUserID': true,
       });
       addLike();
+      if (url == "abc") {
+        setState(() {
+          likeCount = likeCount + 1;
+          isLiked = true;
+          likes[currentUserID] = true;
+          showHeart = false;
+        });
+      } else {
+        setState(() {
+          likeCount = likeCount + 1;
+          isLiked = true;
+          likes[currentUserID] = true;
+          showHeart = true;
+        });
+      }
 
-      setState(() {
-        likeCount = likeCount + 1;
-        isLiked = true;
-        likes[currentUserID] = true;
-        showHeart = true;
-      });
       Timer(Duration(milliseconds: 800), () {
         setState(() {
           showHeart = false;
@@ -258,91 +288,267 @@ class _PostState extends State<Post> {
   }
 
   createPostPicture() {
-    return GestureDetector(
-      onDoubleTap: () => controlUserLikePost(),
-      child: Stack(
-        alignment: Alignment.center,
-        children: <Widget>[
-          Image.network(
-            url,
-            height: 300,
-            width: 320,
-            fit: BoxFit.fitWidth,
-          ),
-          showHeart
-              ? Icon(
-                  Icons.favorite,
-                  size: 100.0,
-                  color: Colors.pink,
-                )
-              : Text(""),
-        ],
-      ),
-    );
+    if (url == "abc") {
+      return GestureDetector(
+        onDoubleTap: () => print("double tap"),
+        child: Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            showHeart
+                ? Icon(
+                    Icons.favorite,
+                    size: 100.0,
+                    color: Colors.pink,
+                  )
+                : Text(""),
+          ],
+        ),
+      );
+    } else {
+      return GestureDetector(
+        onDoubleTap: () => controlUserLikePost(),
+        child: Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            Image.network(
+              url,
+              height: 250,
+              width: 320,
+              fit: BoxFit.fitWidth,
+            ),
+            showHeart
+                ? Icon(
+                    Icons.favorite,
+                    size: 100.0,
+                    color: Colors.pink,
+                  )
+                : Text(""),
+          ],
+        ),
+      );
+    }
   }
 
 //createPostFooter method
 
   createPostFooter() {
-    return Column(
-      children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Padding(padding: EdgeInsets.only(top: 40.0, left: 20.0)),
-            GestureDetector(
-              onTap: () => controlUserLikePost(),
-              child: Icon(
-                isLiked ? Icons.favorite : Icons.favorite_border,
-                size: 28.0,
-                color: Colors.pink,
-              ),
-            ),
-            Padding(padding: EdgeInsets.only(right: 18.0)),
-            GestureDetector(
-              onTap: () => displayComments(context,
-                  postId: postId, ownerId: ownerId, url: url),
-              child: Icon(
-                Icons.chat_bubble_outline,
-                size: 28.0,
-                color: Colors.black,
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: <Widget>[
-            Container(
-                margin: EdgeInsets.only(left: 20.0, bottom: 5.0),
+    if (url == "abc") {
+      return Column(
+        children: <Widget>[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(bottom: 15.0, left: 15.0, right: 10.0),
                 child: Text(
-                  "$likeCount likes",
+                  "Question:",
+                  // "$username ",
                   style: TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.bold),
-                ))
-          ],
-        ),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(bottom: 40.0, left: 20.0, right: 5.0),
-              child: Text(
-                "Question:",
-                // "$username ",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15.0),
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15.0),
+                ),
               ),
-            ),
-            Expanded(
+              Expanded(
+                  child: Text(
+                description,
+                style: TextStyle(color: Colors.black, fontSize: 15.0),
+              ))
+            ],
+          ),
+        ],
+      );
+    } else {
+      return Column(
+        children: <Widget>[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(bottom: 30.0, left: 15.0, right: 10.0),
                 child: Text(
-              description,
-              style: TextStyle(color: Colors.black, fontSize: 15.0),
-            ))
-          ],
-        )
-      ],
+                  "Question:",
+                  // "$username ",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15.0),
+                ),
+              ),
+              Container(
+                  constraints: BoxConstraints(maxWidth: 250.0),
+                  // padding: EdgeInsets.only(left: 10.0, top: 10.0),
+                  margin: EdgeInsets.only(bottom: 10.0, right: 10.0),
+                  child: Text(
+                    description,
+                    style: TextStyle(color: Colors.black, fontSize: 15.0),
+                  ))
+            ],
+          ),
+        ],
+      );
+    }
+  }
+
+  // for question on top of the image and like coment at the bottom
+
+  createPostFooterComentLike() {
+    return FutureBuilder(
+      future: usersRef.document(ownerId).get(),
+      builder: (context, dataSnapshot) {
+        // User user = User.fromDocument(dataSnapshot.data);
+        bool isPostOwner =
+            currentOnlineUserId == ownerId || currentOnlineUserCategory == 3;
+        // print("category yeh hai");
+        // print(currentOnlineUserCategory);
+        if (url == "abc") {
+          if (isPostOwner) {
+            return Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(padding: EdgeInsets.only(top: 30.0, left: 20.0)),
+                    GestureDetector(
+                      onTap: () => controlUserLikePost(),
+                      child: Icon(
+                        isLiked ? Icons.favorite : Icons.favorite_border,
+                        size: 24.0,
+                        color: Colors.pink,
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.only(right: 15.0)),
+                    GestureDetector(
+                      onTap: () => displayComments(context,
+                          postId: postId, ownerId: ownerId, url: url),
+                      child: Icon(
+                        Icons.chat_bubble_outline,
+                        size: 24.0,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    Container(
+                        margin: EdgeInsets.only(left: 20.0, bottom: 0.0),
+                        child: Text(
+                          "$likeCount likes",
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ))
+                  ],
+                ),
+              ],
+            );
+          } else {
+            return Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(padding: EdgeInsets.only(top: 30.0, left: 20.0)),
+                    GestureDetector(
+                      onTap: () => controlUserLikePost(),
+                      child: Icon(
+                        isLiked ? Icons.favorite : Icons.favorite_border,
+                        size: 24.0,
+                        color: Colors.pink,
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.only(right: 15.0)),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    Container(
+                        margin: EdgeInsets.only(left: 20.0, bottom: 0.0),
+                        child: Text(
+                          "$likeCount likes",
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ))
+                  ],
+                ),
+              ],
+            );
+          }
+        } else {
+          if (isPostOwner) {
+            return Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(padding: EdgeInsets.only(top: 40.0, left: 20.0)),
+                    GestureDetector(
+                      onTap: () => controlUserLikePost(),
+                      child: Icon(
+                        isLiked ? Icons.favorite : Icons.favorite_border,
+                        size: 24.0,
+                        color: Colors.pink,
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.only(right: 15.0)),
+                    GestureDetector(
+                      onTap: () => displayComments(context,
+                          postId: postId, ownerId: ownerId, url: url),
+                      child: Icon(
+                        Icons.chat_bubble_outline,
+                        size: 24.0,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    Container(
+                        margin: EdgeInsets.only(left: 20.0, bottom: 0.0),
+                        child: Text(
+                          "$likeCount likes",
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ))
+                  ],
+                ),
+              ],
+            );
+          } else {
+            return Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(padding: EdgeInsets.only(top: 40.0, left: 20.0)),
+                    GestureDetector(
+                      onTap: () => controlUserLikePost(),
+                      child: Icon(
+                        isLiked ? Icons.favorite : Icons.favorite_border,
+                        size: 24.0,
+                        color: Colors.pink,
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.only(right: 15.0)),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    Container(
+                        margin: EdgeInsets.only(left: 20.0, bottom: 0.0),
+                        child: Text(
+                          "$likeCount likes",
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ))
+                  ],
+                ),
+              ],
+            );
+          }
+        }
+      },
     );
   }
 
@@ -356,6 +562,19 @@ class _PostState extends State<Post> {
     print('my email' + user.email);
 
     return user.uid;
+  }
+
+//get User Category
+
+  Future<int> getUserCategory() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    DocumentSnapshot ds =
+        await Firestore.instance.collection('users').document(user.uid).get();
+    print('my uid' + user.uid);
+    print('my name' + ds.data['name']);
+    print('my email' + user.email);
+
+    return ds.data['catogery'];
   }
 
   displayComments(BuildContext context,

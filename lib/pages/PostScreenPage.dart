@@ -1,11 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:smart_moskea/pages/HomeMsg.dart';
 import 'package:smart_moskea/widgets/postWidget.dart';
-import '../widgets/header.dart';
 
 //New code 13-june grid open image
 
 import '../widgets/progress.dart';
+
+final postsReference = Firestore.instance.collection("posts");
 
 class PostScreenPage extends StatelessWidget {
   final String userId;

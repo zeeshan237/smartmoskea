@@ -4,9 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import "package:flutter/material.dart";
 import 'package:image_picker/image_picker.dart';
-import 'package:smart_moskea/pages/HomeMsg.dart';
-import 'package:smart_moskea/pages/forum.dart';
-import 'package:smart_moskea/pages/loggedInMainScreen.dart';
 import 'package:uuid/uuid.dart';
 import 'package:image/image.dart' as ImD;
 import 'package:path_provider/path_provider.dart';
@@ -24,8 +21,9 @@ class UploadPhotoPage extends StatefulWidget {
 
 class _UploadPhotoPageState extends State<UploadPhotoPage> {
   final DateTime timestamp = DateTime.now();
-  File sampleImage;
+
   bool uploading = false;
+  bool uploading1 = false;
   String postId = Uuid().v4();
   TextEditingController descriptionTextEditingController =
       TextEditingController();
@@ -44,12 +42,12 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
     return user;
   }
 
-  Future getImage() async {
-    var tempImage = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      sampleImage = tempImage;
-    });
-  }
+  // Future getImage() async {
+  //   var tempImage = await ImagePicker.pickImage(source: ImageSource.gallery);
+  //   setState(() {
+  //     sampleImage = tempImage;
+  //   });
+  // }
 
   bool validateAndSave() {
     final form = formKey.currentState;
@@ -90,7 +88,7 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
                     ? showUpload == false
                         ? Text(
                             "|      1:  Ask without Image      |      2:  Ask With Image      |")
-                        : enableUpload1()
+                        : enableUpload2()
                     : enableUpload();
               }),
         ),
@@ -116,6 +114,7 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
     // );
   }
 
+  File sampleImage;
   //Compressing the photo
   compressingPhoto() async {
     final tDirectory = await getTemporaryDirectory();
@@ -128,46 +127,74 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
     });
   }
 
-// handle submit post only text
-  // controlUploadAndSave1() async {
-  //   setState(() {
-  //     uploading = true;
-  //   });
-  //   savePostInfoToFirestore1();
+//handle submit post only text
 
-  //   savePostInfoToFirestore1(
-  //       description: descriptionTextEditingController.text);
-  //   descriptionTextEditingController.clear();
-  //   setState(() {
-  //     //  sampleImage = null;
-  //     uploading = false;
-  //     postId = Uuid().v4();
-  //   });
-  // }
+  controlUploadAndSave1() async {
+    if (validateAndSave()) {
+      setState(() {
+        uploading1 = true;
+      });
+      String downloadUrl = "abc";
+      // String downloadUrl =
+      //   await uploadPhoto(File("http://i.pravatar.cc/300"));
+      await savePostInfoToFirestore1(
+          url: downloadUrl,
+          // url: Image.asset('assets/test.png'),
+          description: descriptionTextEditingController.text);
+      descriptionTextEditingController.clear();
+      setState(() {
+        uploading1 = false;
+        postId = Uuid().v4();
+        Navigator.of(context).pop();
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                content: Text("Your Question is Successfully Uploaded"),
+              );
+            });
+      });
+
+      // Navigator.of(context).pop();
+      // showDialog(
+      //     context: context,
+      //     builder: (context) {
+      //       return AlertDialog(
+      //         content: Text("Your Question is Successfully Uploaded"),
+      //       );
+      //     });
+    } else {
+      print("Description Requrired");
+    }
+  }
 
 // handle submit post
   controlUploadAndSave() async {
-    setState(() {
-      uploading = true;
-    });
-    await compressingPhoto();
-    String downloadUrl = await uploadPhoto(sampleImage);
-    savePostInfoToFirestore(
-        url: downloadUrl, description: descriptionTextEditingController.text);
-    descriptionTextEditingController.clear();
-    setState(() {
-      sampleImage = null;
-      uploading = false;
-      postId = Uuid().v4();
-      Navigator.of(context).pop();
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              content: Text("Your Question is Successfully Uploaded"),
-            );
-          });
-    });
+    if (validateAndSave()) {
+      setState(() {
+        uploading = true;
+      });
+      await compressingPhoto();
+      String downloadUrl = await uploadPhoto(sampleImage);
+      savePostInfoToFirestore(
+          url: downloadUrl, description: descriptionTextEditingController.text);
+      descriptionTextEditingController.clear();
+      setState(() {
+        sampleImage = null;
+        uploading = false;
+        postId = Uuid().v4();
+        Navigator.of(context).pop();
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                content: Text("Your Question is Successfully Uploaded"),
+              );
+            });
+      });
+    } else {
+      print('Enter Description');
+    }
   }
 
   //getting user email
@@ -214,7 +241,7 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
 
   // save post without image just only text
   // send to firestore
-  savePostInfoToFirestore1({String description}) {
+  savePostInfoToFirestore1({String url, String description}) {
     postsReference
         .document(accountId)
         .collection('usersPosts')
@@ -223,7 +250,7 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
       "postId": postId,
       "ownerId": accountId,
       "username": accountName,
-      // "url": url,
+      "url": url,
       "email": accountEmail,
       "description": description,
       "timestamp": timestamp,
@@ -264,9 +291,18 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
   //   });
   // }
 
-//upload just description
-  Widget enableUpload1() {
-    print("enableupload1 called");
+// method for uploadImage
+  Future<String> uploadPhoto(mImageFile) async {
+    StorageUploadTask mStorageUploadTask =
+        storageReference.child("post_$postId.jpg").putFile(mImageFile);
+    StorageTaskSnapshot storageTaskSnapshot =
+        await mStorageUploadTask.onComplete;
+    String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
+    return downloadUrl;
+  }
+
+// testing enable upload 2
+  Widget enableUpload2() {
     return new Container(
         child: new Form(
       key: formKey,
@@ -275,12 +311,16 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
           uploading ? linearProgress() : Text(""),
           SizedBox(
             height: 15.0,
+            //width: 250.0,
           ),
           TextFormField(
             controller: descriptionTextEditingController,
             decoration: new InputDecoration(labelText: 'Description'),
             validator: (value) {
-              return value.isEmpty ? 'Description is required' : null;
+              if (value.isEmpty) {
+                return 'Please Enter Description';
+              }
+              return null;
             },
             onSaved: (value) {
               return _myValue = value;
@@ -290,53 +330,19 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
             height: 15.0,
           ),
           RaisedButton(
-              elevation: 10.0,
-              child: Text("Add a New Post"),
-              textColor: Colors.white,
-              color: Colors.pink,
-              onPressed: () {
-                setState(() {
-                  uploading = true;
-                });
+            elevation: 10.0,
+            child: Text("Add a New Post"),
+            textColor: Colors.white,
+            color: Colors.pink,
+            onPressed: uploading ? null : () => controlUploadAndSave1(),
 
-                savePostInfoToFirestore1(
-                    description: descriptionTextEditingController.text);
-                descriptionTextEditingController.clear();
-                setState(() {
-                  //  sampleImage = null;
-                  uploading = false;
-                  postId = Uuid().v4();
-                });
+            // { validateAndSave;
 
-                //  uploading ? linearProgress() : Text("");
-                Navigator.of(context).pop();
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        content: Text("Your Question is Successfully Uploaded"),
-                      );
-                    });
-              }
-              // { validateAndSave;
-              // uploading ? null : () => controlUploadAndSave1(),
-              // }
-              )
+            // }
+          )
         ],
       ),
     ));
-    //   },
-    // );
-  }
-
-// method for uploadImage
-  Future<String> uploadPhoto(mImageFile) async {
-    StorageUploadTask mStorageUploadTask =
-        storageReference.child("post_$postId.jpg").putFile(mImageFile);
-    StorageTaskSnapshot storageTaskSnapshot =
-        await mStorageUploadTask.onComplete;
-    String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
-    return downloadUrl;
   }
 
   Widget enableUpload() {
@@ -374,7 +380,10 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
             controller: descriptionTextEditingController,
             decoration: new InputDecoration(labelText: 'Description'),
             validator: (value) {
-              return value.isEmpty ? 'Description is required' : null;
+              if (value.isEmpty) {
+                return 'Please Enter Description';
+              }
+              return null;
             },
             onSaved: (value) {
               return _myValue = value;
@@ -423,6 +432,9 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
                 setState(() {
                   showUpload = true;
                   Navigator.of(context).pop();
+                  // sampleImage = Image.file(await getImageFileFromAsset())
+                  // sampleImage = File(
+                  //     'https://responsewebrecruitment.co.uk/wp-content/uploads/2013/06/question-bubble.jpg');
                 });
               },
             ),
@@ -458,6 +470,19 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
       },
     );
   }
+
+  // captureImageWithDescription() async {
+  //   Navigator.pop(context);
+  //   File imageFile = AssetImage('assets/test.png') as File;
+  //   //await ImagePicker.pickImage(
+  //   // source: AssetImage('assets/test.png'),
+  //   // maxHeight: 680;
+  //   // maxWidth: 970,
+
+  //   setState(() {
+  //     sampleImage = imageFile;
+  //   });
+  // }
 
   captureImageWithCamera() async {
     Navigator.pop(context);

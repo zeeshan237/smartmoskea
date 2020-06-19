@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_moskea/models/user.dart';
@@ -22,10 +23,18 @@ class _forumState extends State<forum> {
     setState(() {});
   }
 
+  int currentOnlineUserCategory;
   _forumState() {
     userCurrentID().then((value) {
       if (value != null) {
         this.accountID = value;
+        updateDetails();
+      }
+    });
+
+    getUserCategory().then((value) {
+      if (value != null) {
+        this.currentOnlineUserCategory = value;
         updateDetails();
       }
     });
@@ -50,7 +59,8 @@ class _forumState extends State<forum> {
   Widget callPage(int index) {
     switch (index) {
       case 0:
-        return HomeMsg(userProfileId: accountID);
+        return HomeMsg(
+            userProfileId: accountID, userCategory: currentOnlineUserCategory);
       //  Navigator.push(context, MaterialPageRoute(builder: (context) {
       //  return new UploadPhotoPage();
       //  }));
@@ -62,7 +72,9 @@ class _forumState extends State<forum> {
       //   userId: 'userId',
       //   onSignedOut: () {},
       case 1:
-        return YourQuestion(userProfileId: accountID);
+        return YourQuestion(
+          userProfileId: accountID,
+        );
 
       case 2:
         return answered();
@@ -108,16 +120,17 @@ class _forumState extends State<forum> {
         ),
       ),
       Expanded(
-          child: new Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30.0),
-            topRight: Radius.circular(30.0),
+        child: new Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30.0),
+              topRight: Radius.circular(30.0),
+            ),
           ),
+          child: callPage(selectPage),
         ),
-        child: callPage(selectPage),
-      ))
+      ),
     ]);
   }
 
@@ -131,6 +144,19 @@ class _forumState extends State<forum> {
     //uuuser.get;
     //final String email = user.uid.toString();
     return user.uid;
+  }
+
+  //get User Category
+
+  Future<int> getUserCategory() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    DocumentSnapshot ds =
+        await Firestore.instance.collection('users').document(user.uid).get();
+    print('my uid' + user.uid);
+    print('my name' + ds.data['name']);
+    print('my email' + user.email);
+
+    return ds.data['catogery'];
   }
 
   // Forum code from favortie icon End
