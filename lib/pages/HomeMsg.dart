@@ -56,46 +56,29 @@ class _HomeMsg extends State<HomeMsg> {
     postsList.clear();
     if (currentOnlineUserCategory == 3) {
       return Scaffold(
-        // Forum code from favortie icon Start
-
         body: FutureBuilder<bool>(
             future: getAllProfilePosts(),
             builder: (context, snapshot) {
-              //  print(postsList[0].timestamp);
-
               if (!snapshot.hasData || !snapshot.data)
                 return circularProgress();
 
               return ListView(
                 children: <Widget>[
-                  // buildProfileHeader(),
                   createListAndGridPostOrientation(),
                   Divider(
                     height: 0.0,
                     color: black,
                   ),
                   displayProfilePost(),
-                  // Divider(),
-                  // buildTogglePostOrientation(),
-                  // Divider(
-                  //   height: 0.0,
-                  // ),
-                  //  buildProfilePosts(),
                 ],
               );
             }),
-
-        // Forum code from favortie icon End
       );
     } else {
       return Scaffold(
-        // Forum code from favortie icon Start
-
         body: FutureBuilder<bool>(
             future: getAllProfilePosts(),
             builder: (context, snapshot) {
-              //  print(postsList[0].timestamp);
-
               if (!snapshot.hasData || !snapshot.data)
                 return circularProgress();
 
@@ -108,12 +91,6 @@ class _HomeMsg extends State<HomeMsg> {
                     color: black,
                   ),
                   displayProfilePost(),
-                  // Divider(),
-                  // buildTogglePostOrientation(),
-                  // Divider(
-                  //   height: 0.0,
-                  // ),
-                  //  buildProfilePosts(),
                 ],
               );
             }),
@@ -126,48 +103,13 @@ class _HomeMsg extends State<HomeMsg> {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return new UploadPhotoPage();
               }));
-            }
-
-            // file == null ? takeImage(context) : displayUploadFormScreen(),
-            //this on pressed when called takeImage will be called success but
-            //after image taken it should be displayUploadFormScreen() called but its not working, check this small issue so i will also judge your expertise then we will discuss project details budget and document
-            //add question here.
-            // r u there?????
-            ),
+            }),
       );
     }
   }
 
   /// display post from post widget to profile
   displayProfilePost() {
-    // if (postsList.isEmpty) {
-    //   print("List Empty hai");
-    //   return Container(
-    //     child: Column(
-    //       mainAxisAlignment: MainAxisAlignment.center,
-    //       children: <Widget>[
-    //         Padding(
-    //           padding: EdgeInsets.all(30.0),
-    //           child: Icon(
-    //             Icons.photo_library,
-    //             color: Colors.grey,
-    //             size: 200.0,
-    //           ),
-    //         ),
-    //         Padding(
-    //           padding: EdgeInsets.only(top: 20.0),
-    //           child: Text(
-    //             "No Posts",
-    //             style: TextStyle(
-    //                 color: Colors.black,
-    //                 fontSize: 40.0,
-    //                 fontWeight: FontWeight.bold),
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   );
-    // } else
     if (postOrientation == "list") {
       return Column(
         children: postsList,
@@ -190,12 +132,12 @@ class _HomeMsg extends State<HomeMsg> {
     }
   }
 
-  // gora code 2 this one is working code just ascending order is issue
+  // HomeMsg (after calling Forum Page ) code 2 this one is working code
   Future<bool> getAllProfilePosts() async {
     postsList.clear();
     QuerySnapshot querySnapshot =
         await Firestore.instance.collection("users").getDocuments();
-    postsList.clear();
+
     for (DocumentSnapshot documentSnapshot in querySnapshot.documents) {
       QuerySnapshot userPosts = await postsReference
           .document(documentSnapshot.documentID)
@@ -206,13 +148,30 @@ class _HomeMsg extends State<HomeMsg> {
       postsList.addAll(userPosts.documents
           .map((documentSnapshot) => Post.fromDocument(documentSnapshot)));
     }
+    postsList.sort((a, b) {
+      DateTime one = a.timestamp;
+      DateTime two = b.timestamp;
+      int val = two.compareTo(one);
 
+      return val;
+    });
     countPost = postsList.length;
 
     print("all users post count: $countPost");
+    print("list cleared");
     return true;
   }
 
+  // userPosts.documents.sort((a, b) {
+  //   DateTime one = b["timestamp"].toDate();
+  //   DateTime two = a["timestamp"].toDate();
+  //   int val = two.compareTo(one);
+  //   String user = a["username"];
+  //   print("$user $one :$val: $two");
+  //   return val;
+  // });
+  //.sort((a, b) => a["timestamp"].compareTo(b["timestamp"]));
+  //------------------------
   // Future<bool> getAllProfilePosts() async {
   //   // postsList.clear();
   //   QuerySnapshot querySnapshot = await Firestore.instance
@@ -290,9 +249,9 @@ class _HomeMsg extends State<HomeMsg> {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     DocumentSnapshot ds =
         await Firestore.instance.collection('users').document(user.uid).get();
-    print('my uid' + user.uid);
-    print('my name' + ds.data['name']);
-    print('my email' + user.email);
+    //print('my uid' + user.uid);
+    //print('my name' + ds.data['name']);
+    //print('my email' + user.email);
 
     return ds.data['catogery'];
   }

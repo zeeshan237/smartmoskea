@@ -1,4 +1,4 @@
-library timeago_flutter;
+//library timeago_flutter;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,25 +10,25 @@ import 'package:smart_moskea/widgets/postWidget.dart';
 import 'package:smart_moskea/widgets/progress.dart';
 import 'package:timeago/timeago.dart' as tAgo;
 
-class CommentsPage extends StatefulWidget {
+class CommentsPage1 extends StatefulWidget {
   final String postId;
   final String postOwnerId;
   final String postImageUrl;
 
-  CommentsPage({this.postId, this.postOwnerId, this.postImageUrl});
+  CommentsPage1({this.postId, this.postOwnerId, this.postImageUrl});
   @override
-  CommentsPageState createState() => CommentsPageState(
+  CommentsPage1State createState() => CommentsPage1State(
       postId: postId, postOwnerId: postOwnerId, postImageUrl: postImageUrl);
 }
 
-class CommentsPageState extends State<CommentsPage> {
+class CommentsPage1State extends State<CommentsPage1> {
   final String postId;
   final String postOwnerId;
   final String postImageUrl;
 
   TextEditingController commentTextEditingController = TextEditingController();
 
-  CommentsPageState({this.postId, this.postOwnerId, this.postImageUrl});
+  CommentsPage1State({this.postId, this.postOwnerId, this.postImageUrl});
 
   updateDetails() {
     setState(() {});
@@ -164,31 +164,31 @@ class CommentsPageState extends State<CommentsPage> {
             child: retrieveComments(),
           ),
           Divider(),
-          ListTile(
-            // height: 60.0,
-            title: TextFormField(
-              controller: commentTextEditingController,
-              decoration: InputDecoration(
-                labelText: 'Write an Answer',
-                labelStyle: TextStyle(color: Colors.deepOrangeAccent),
-                enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey)),
-                focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.deepOrangeAccent)),
-              ),
-              style: TextStyle(color: Colors.black),
-            ),
-            trailing: OutlineButton(
-              onPressed: saveComment,
-              borderSide: BorderSide(color: Colors.deepOrangeAccent),
-              child: Text(
-                'Post',
-                style: TextStyle(
-                    color: Colors.deepOrangeAccent,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-          )
+          // ListTile(
+          //   // height: 60.0,
+          //   title: TextFormField(
+          //     controller: commentTextEditingController,
+          //     decoration: InputDecoration(
+          //       labelText: 'Write an Answer',
+          //       labelStyle: TextStyle(color: Colors.deepOrangeAccent),
+          //       enabledBorder: OutlineInputBorder(
+          //           borderSide: BorderSide(color: Colors.grey)),
+          //       focusedBorder: OutlineInputBorder(
+          //           borderSide: BorderSide(color: Colors.deepOrangeAccent)),
+          //     ),
+          //     style: TextStyle(color: Colors.black),
+          //   ),
+          //   trailing: OutlineButton(
+          //     onPressed: saveComment,
+          //     borderSide: BorderSide(color: Colors.deepOrangeAccent),
+          //     child: Text(
+          //       'Post',
+          //       style: TextStyle(
+          //           color: Colors.deepOrangeAccent,
+          //           fontWeight: FontWeight.bold),
+          //     ),
+          //   ),
+          // )
         ],
       ),
     );
