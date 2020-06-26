@@ -15,6 +15,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 final usersRef = Firestore.instance.collection('users');
 final DateTime timestamp = DateTime.now();
 
+// ignore: must_be_immutable
 class Post extends StatefulWidget {
   final String postId;
   final String ownerId;
