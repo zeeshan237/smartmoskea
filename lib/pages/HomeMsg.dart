@@ -99,7 +99,7 @@ class _HomeMsg extends State<HomeMsg> {
             builder: (context, snapshot) {
               //  print(postsList[0].timestamp);
 
-              if (snapshot.hasData==false || snapshot.data==false)
+              if (snapshot.hasData == false || snapshot.data == false)
                 return circularProgress();
               return ListView(
                 children: <Widget>[
@@ -109,7 +109,7 @@ class _HomeMsg extends State<HomeMsg> {
                     height: 0.0,
                     color: black,
                   ),
-                  
+
                   displayProfilePost(),
                   // Divider(),
                   // buildTogglePostOrientation(),
@@ -128,7 +128,7 @@ class _HomeMsg extends State<HomeMsg> {
             onPressed: () async {
               bool rebuild = await Navigator.push(context,
                   MaterialPageRoute(builder: (context) => UploadPhotoPage()));
-              if(rebuild==true) _future=getAllProfilePosts();
+              if (rebuild == true) _future = getAllProfilePosts();
             }
 
             // file == null ? takeImage(context) : displayUploadFormScreen(),

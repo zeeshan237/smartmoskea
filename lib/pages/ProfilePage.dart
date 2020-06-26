@@ -22,7 +22,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    _future=getAllProfilePosts();
+    _future = getAllProfilePosts();
   }
 
   @override
