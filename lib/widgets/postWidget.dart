@@ -111,12 +111,12 @@ class _PostState extends State<Post> {
     super.initState();
     getUserId().then((value) {
       currentOnlineUserId = value;
-      updateDetails();
+      //updateDetails();
     });
 
     getUserCategory().then((value) {
       currentOnlineUserCategory = value;
-      updateDetails();
+      //updateDetails();
     });
   }
 
@@ -551,9 +551,9 @@ class _PostState extends State<Post> {
   Future<String> getUserId() async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
 
-    print('my uid' + user.uid);
+    // print('my uid' + user.uid);
 
-    print('my email' + user.email);
+    // print('my email' + user.email);
 
     return user.uid;
   }
@@ -564,9 +564,9 @@ class _PostState extends State<Post> {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     DocumentSnapshot ds =
         await Firestore.instance.collection('users').document(user.uid).get();
-    print('my uid' + user.uid);
-    print('my name' + ds.data['name']);
-    print('my email' + user.email);
+    // print('my uid' + user.uid);
+    // print('my name' + ds.data['name']);
+    // print('my email' + user.email);
 
     return ds.data['catogery'];
   }

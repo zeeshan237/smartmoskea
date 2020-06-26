@@ -38,28 +38,31 @@ class _HomeMsg extends State<HomeMsg> {
 
   String postOrientation = "list";
   File file;
+  Future<bool> _future;
 
   updateDetails() {
     setState(() {});
   }
 
   int currentOnlineUserCategory;
-  _HomeMsg() {
+
+  @override
+  void initState() {
+    super.initState();
     getUserCategory().then((value) {
       this.currentOnlineUserCategory = value;
-      updateDetails();
     });
+    _future=getAllProfilePosts();
   }
 
   @override
   Widget build(BuildContext context) {
-    postsList.clear();
     if (currentOnlineUserCategory == 3) {
       return Scaffold(
         // Forum code from favortie icon Start
 
         body: FutureBuilder<bool>(
-            future: getAllProfilePosts(),
+            future: _future,
             builder: (context, snapshot) {
               //  print(postsList[0].timestamp);
 
@@ -92,7 +95,7 @@ class _HomeMsg extends State<HomeMsg> {
         // Forum code from favortie icon Start
 
         body: FutureBuilder<bool>(
-            future: getAllProfilePosts(),
+            future: _future,
             builder: (context, snapshot) {
               //  print(postsList[0].timestamp);
 
@@ -192,9 +195,7 @@ class _HomeMsg extends State<HomeMsg> {
 
   // gora code 2 this one is working code just ascending order is issue
   Future<bool> getAllProfilePosts() async {
-    postsList.clear();
-    QuerySnapshot querySnapshot =
-        await Firestore.instance.collection("users").getDocuments();
+    QuerySnapshot querySnapshot = await Firestore.instance.collection("users").getDocuments();
     postsList.clear();
     for (DocumentSnapshot documentSnapshot in querySnapshot.documents) {
       QuerySnapshot userPosts = await postsReference
@@ -209,7 +210,7 @@ class _HomeMsg extends State<HomeMsg> {
 
     countPost = postsList.length;
 
-    print("all users post count: $countPost");
+    print("Home: all users post count: $countPost");
     return true;
   }
 
@@ -290,9 +291,9 @@ class _HomeMsg extends State<HomeMsg> {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     DocumentSnapshot ds =
         await Firestore.instance.collection('users').document(user.uid).get();
-    print('my uid' + user.uid);
-    print('my name' + ds.data['name']);
-    print('my email' + user.email);
+    // print('my uid' + user.uid);
+    // print('my name' + ds.data['name']);
+    // print('my email' + user.email);
 
     return ds.data['catogery'];
   }

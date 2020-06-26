@@ -136,8 +136,8 @@ class _ForumState extends State<Forum> {
 
   Future<String> userCurrentID() async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    print('you are' + user.uid);
-    print('your email' + user.email);
+    // print('you are' + user.uid);
+    // print('your email' + user.email);
 
     //uuuser.get;
     //final String email = user.uid.toString();
@@ -150,9 +150,9 @@ class _ForumState extends State<Forum> {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     DocumentSnapshot ds =
         await Firestore.instance.collection('users').document(user.uid).get();
-    print('my uid' + user.uid);
-    print('my name' + ds.data['name']);
-    print('my email' + user.email);
+    // print('my uid' + user.uid);
+    // print('my name' + ds.data['name']);
+    // print('my email' + user.email);
 
     return ds.data['catogery'];
   }

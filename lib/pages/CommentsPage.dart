@@ -109,9 +109,9 @@ class CommentsPageState extends State<CommentsPage> {
   Future<String> getUserId() async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
 
-    print('my uid' + user.uid);
+    // print('my uid' + user.uid);
 
-    print('my email' + user.email);
+    // print('my email' + user.email);
 
     return user.uid;
   }
@@ -122,9 +122,9 @@ class CommentsPageState extends State<CommentsPage> {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     DocumentSnapshot ds =
         await Firestore.instance.collection('users').document(user.uid).get();
-    print('my uid' + user.uid);
-    print('my name' + ds.data['name']);
-    print('my email' + user.email);
+    // print('my uid' + user.uid);
+    // print('my name' + ds.data['name']);
+    // print('my email' + user.email);
 
     return ds.data['name'];
   }
