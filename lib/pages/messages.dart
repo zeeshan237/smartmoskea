@@ -1,21 +1,18 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import 'dart:io';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'chat_message.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 const String _name = "Anonymus";
 
-class messages extends StatefulWidget {
-  messages(String title, {Key key, this.userId, this.onSignedOut})
+class Messages extends StatefulWidget {
+  Messages(String title, {Key key, this.userId, this.onSignedOut})
       : _title = title,
         super(key: key);
 
@@ -24,10 +21,10 @@ class messages extends StatefulWidget {
   final String userId;
 
   @override
-  State createState() => messagesState(_title);
+  State createState() => MessagesState(_title);
 }
 
-class messagesState extends State<messages> with TickerProviderStateMixin {
+class MessagesState extends State<Messages> with TickerProviderStateMixin {
   userPRofileGet() async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     print('you are' + user.uid);
@@ -35,6 +32,7 @@ class messagesState extends State<messages> with TickerProviderStateMixin {
     //print('your name' + user.displayName);
   }
 
+  // ignore: unused_field
   final _title;
   final List<ChatMessage> _messages;
   final TextEditingController _textController;
@@ -43,7 +41,7 @@ class messagesState extends State<messages> with TickerProviderStateMixin {
 
   bool _isComposing = false;
 
-  messagesState(String title)
+  MessagesState(String title)
       : _title = title,
         _isComposing = false,
         _messages = <ChatMessage>[],

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:smart_moskea/pages/BeforeLoggedInMainScreen.dart';
-import 'package:smart_moskea/ui/login_page.dart';
 
 class AuthServices {
+  // ignore: unused_field
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   void signOut(context) {

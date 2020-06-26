@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'profile_card.dart';
 import 'user_profile.dart';
 
 void main() {
@@ -12,7 +11,7 @@ class App extends StatelessWidget {
       home: Scaffold(
         body: Column(
           children: <Widget>[
-            userProfile(),
+            UserProfile(),
           ],
         ),
       ),

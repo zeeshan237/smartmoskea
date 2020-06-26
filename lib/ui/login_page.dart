@@ -43,6 +43,7 @@ class _LoginPageState extends State<LoginPage>
   TextEditingController loginEmailController = new TextEditingController();
   TextEditingController loginPasswordController = new TextEditingController();
 
+  // ignore: unused_field
   bool _autoValidate = false;
   bool _obscureTextLogin = true;
   bool _obscureTextSignup = true;
@@ -62,18 +63,20 @@ class _LoginPageState extends State<LoginPage>
   Color left = Colors.black;
   Color right = Colors.white;
 
-  int SelectedRadio;
+  int selectedRadio;
   bool viewComVisible = false;
   bool viewImamVisible = false;
 
   File _image;
 
+  // ignore: unused_field
   String phoneNumber, verificationId, smsCode, _signInPhoneNumber;
 
   bool smsSent = false;
 
   bool isExist = false;
 
+  // ignore: non_constant_identifier_names
   void open_camera() async {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
     setState(() {
@@ -81,6 +84,7 @@ class _LoginPageState extends State<LoginPage>
     });
   }
 
+  // ignore: non_constant_identifier_names
   void open_gallery() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
@@ -89,10 +93,12 @@ class _LoginPageState extends State<LoginPage>
   }
 
   Future uploadImage(BuildContext context) async {
+    // ignore: unused_local_variable
     String filename = basename(_image.path);
     StorageReference firebaseStorageRef =
         FirebaseStorage.instance.ref().child('Certificate');
     StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
+    // ignore: unused_local_variable
     StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
     setState(() {
       print('certificate  upoaded');
@@ -119,6 +125,7 @@ class _LoginPageState extends State<LoginPage>
 // return user.uid;
 // }
 
+  // ignore: non_constant_identifier_names
   Widget commette_feild() {
     return Visibility(
       visible: viewComVisible,
@@ -146,6 +153,7 @@ class _LoginPageState extends State<LoginPage>
     );
   }
 
+  // ignore: non_constant_identifier_names
   Widget imam_feild() {
     return Visibility(
       visible: viewImamVisible,
@@ -246,6 +254,7 @@ class _LoginPageState extends State<LoginPage>
     return new Scaffold(
       key: _scaffoldKey,
       body: NotificationListener<OverscrollIndicatorNotification>(
+        // ignore: missing_return
         onNotification: (overscroll) {
           overscroll.disallowGlow();
         },
@@ -322,7 +331,7 @@ class _LoginPageState extends State<LoginPage>
   @override
   void initState() {
     super.initState();
-    SelectedRadio = 0;
+    selectedRadio = 0;
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -334,21 +343,21 @@ class _LoginPageState extends State<LoginPage>
 
   setSelectedRadio(int val) {
     setState(() {
-      SelectedRadio = val;
+      selectedRadio = val;
     });
-    if (SelectedRadio == 1) {
+    if (selectedRadio == 1) {
       hideComWidget();
       hideImamWidget();
     }
-    if (SelectedRadio == 2) {
+    if (selectedRadio == 2) {
       showComWidget();
       hideImamWidget();
     }
-    if (SelectedRadio == 3) {
+    if (selectedRadio == 3) {
       showImamWidget();
       hideComWidget();
     }
-    print(SelectedRadio);
+    print(selectedRadio);
   }
 
   String validateMobile(String value) {
@@ -363,24 +372,30 @@ class _LoginPageState extends State<LoginPage>
   }
 
   String validatePassword(String value) {
+    String msg="";
     if (value.isEmpty) {
-      return "Please enter Password";
+      msg= "Please enter Password";
     }
+    return msg;
   }
 
   String validateName(String value) {
+    String msg="";
     if (value.isEmpty) {
-      return "Please enter your Name";
+      msg= "Please enter your Name";
     }
+    return msg;
   }
 
   String validateSignupPassword(String value) {
+    String msg="";
     if (value.isEmpty) {
-      return "Please Enter Email";
+      msg= "Please Enter Email";
     }
-    if (value.length < 8) {
-      return "Enter More Then 8 Characters";
+    else if (value.length < 8) {
+      msg= "Enter More Then 8 Characters";
     }
+    return msg;
   }
 
 // signIn() async{
@@ -882,7 +897,7 @@ class _LoginPageState extends State<LoginPage>
                           children: <Widget>[
                             Radio(
                                 value: 1,
-                                groupValue: SelectedRadio,
+                                groupValue: selectedRadio,
                                 activeColor: Colors.black,
                                 onChanged: (val) {
                                   setSelectedRadio(val);
@@ -890,7 +905,7 @@ class _LoginPageState extends State<LoginPage>
                             Text("User"),
                             Radio(
                                 value: 2,
-                                groupValue: SelectedRadio,
+                                groupValue: selectedRadio,
                                 activeColor: Colors.black,
                                 onChanged: (val) {
                                   setSelectedRadio(val);
@@ -898,7 +913,7 @@ class _LoginPageState extends State<LoginPage>
                             Text("Commettee"),
                             Radio(
                                 value: 3,
-                                groupValue: SelectedRadio,
+                                groupValue: selectedRadio,
                                 activeColor: Colors.black,
                                 onChanged: (val) {
                                   setSelectedRadio(val);
@@ -967,6 +982,7 @@ class _LoginPageState extends State<LoginPage>
                                   signupConfirmPasswordController.text) {
                                 return "Your Password & Confirm Password is not same";
                               }
+                              return "It's a match";
                             },
                             controller: signupConfirmPasswordController,
                             obscureText: _obscureTextSignupConfirm,
@@ -1378,7 +1394,7 @@ class _LoginPageState extends State<LoginPage>
       //HERE IS WANT TO PUT FIREBASE USER uiD
       'name': signupNameController.text,
       'email': signupEmailController.text,
-      'catogery': SelectedRadio,
+      'catogery': selectedRadio,
       'password': signupConfirmPasswordController.text,
       'timestamp': timestamp,
       'uid': uid,

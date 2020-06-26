@@ -3,28 +3,25 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_moskea/models/user.dart';
 import 'package:smart_moskea/pages/HomeMsg.dart';
-import 'package:smart_moskea/pages/PhotoUpload.dart';
 import 'package:smart_moskea/pages/answered.dart';
 import 'package:smart_moskea/pages/like_questions.dart';
 import 'package:smart_moskea/pages/your_questions.dart';
 //import 'package:smart_moskea/pages/messages.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:smart_moskea/pages/PhotoUpload.dart';
 
-class forum extends StatefulWidget {
+class Forum extends StatefulWidget {
   @override
-  _forumState createState() => _forumState();
+  _ForumState createState() => _ForumState();
 }
 
-class _forumState extends State<forum> {
+class _ForumState extends State<Forum> {
 // Forum code from favortie icon Start
   updateDetails() {
     setState(() {});
   }
 
   int currentOnlineUserCategory;
-  _forumState() {
+  _ForumState() {
     userCurrentID().then((value) {
       if (value != null) {
         this.accountID = value;
@@ -77,10 +74,11 @@ class _forumState extends State<forum> {
         );
 
       case 2:
-        return answered();
+        return Answered();
       case 3:
         return like_questions();
     }
+    return null;
   }
 
   @override

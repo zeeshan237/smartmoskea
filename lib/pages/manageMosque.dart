@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class manageMosque extends StatefulWidget {
+class ManageMosque extends StatefulWidget {
   @override
-  _manageMosqueState createState() => _manageMosqueState();
+  _ManageMosqueState createState() => _ManageMosqueState();
 }
 
-class _manageMosqueState extends State<manageMosque> {
+class _ManageMosqueState extends State<ManageMosque> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[

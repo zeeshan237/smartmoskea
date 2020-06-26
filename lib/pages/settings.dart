@@ -44,7 +44,7 @@ Widget build(BuildContext context) {
                 leading: Icon(Icons.vibration),
                 onTap: () {
                    Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) =>manualSilent()));
+                  builder: (BuildContext context) =>ManualSilent()));
                 },
 
               ),

@@ -220,6 +220,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_moskea/states/app_state.dart';
 
+// ignore: camel_case_types
 class map extends StatelessWidget {
   map({Key key, this.title}) : super(key: key);
 

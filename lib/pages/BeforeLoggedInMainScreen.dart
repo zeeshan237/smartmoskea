@@ -25,6 +25,7 @@ class BeforeLoggedInMainScreen extends StatefulWidget {
 }
 
 class _BeforeLoggedInMainScreenState extends State<BeforeLoggedInMainScreen> {
+  // ignore: unused_field
   int _counter = 0;
   int _current = 1;
 
@@ -40,8 +41,10 @@ class _BeforeLoggedInMainScreenState extends State<BeforeLoggedInMainScreen> {
         return LoginPage();
       //  case 4: return user_profile();
     }
+    return null;
   }
 
+  // ignore: unused_element
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has

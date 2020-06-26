@@ -27,6 +27,7 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
   String postId = Uuid().v4();
   TextEditingController descriptionTextEditingController =
       TextEditingController();
+  // ignore: unused_field
   String _myValue;
   final formKey = new GlobalKey<FormState>();
   String accountEmail = "";

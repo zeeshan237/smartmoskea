@@ -9,19 +9,19 @@ import 'favorite.dart';
 import 'forum.dart';
 import 'settings.dart';
 
-class userProfile extends StatefulWidget {
+class UserProfile extends StatefulWidget {
   @override
-  _userProfileState createState() => _userProfileState();
+  _UserProfileState createState() => _UserProfileState();
 }
 
-class _userProfileState extends State<userProfile> {
+class _UserProfileState extends State<UserProfile> {
   updateDetails() {
     setState(() {});
   }
   String accountEmail = "";
   String accountName = "";
 
-  _userProfileState() {
+  _UserProfileState() {
     userPRofileGet().then((value) {
       if (value != null) {
         this.accountEmail = value;
@@ -92,7 +92,7 @@ class _userProfileState extends State<userProfile> {
           trailing: Icon(Icons.navigate_next),
           onTap: () {
             Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => forum()));
+                .push(MaterialPageRoute(builder: (context) => Forum()));
           },
         ),
         Divider(
@@ -111,7 +111,7 @@ class _userProfileState extends State<userProfile> {
           trailing: Icon(Icons.navigate_next),
           onTap: () {
             Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => forum()));
+                .push(MaterialPageRoute(builder: (context) => Forum()));
           },
         ),
         Divider(
@@ -130,7 +130,7 @@ class _userProfileState extends State<userProfile> {
           trailing: Icon(Icons.navigate_next),
           onTap: () {
             Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => favorite()));
+                .push(MaterialPageRoute(builder: (context) => Favorite()));
           },
         ),
         Divider(
@@ -168,7 +168,7 @@ class _userProfileState extends State<userProfile> {
           trailing: Icon(Icons.navigate_next),
           onTap: () {
             Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => manageMosque()));
+                .push(MaterialPageRoute(builder: (context) => ManageMosque()));
           },
         ),
         Divider(
@@ -187,7 +187,7 @@ class _userProfileState extends State<userProfile> {
           trailing: Icon(Icons.navigate_next),
           onTap: () {
             Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => about()));
+                .push(MaterialPageRoute(builder: (context) => About()));
           },
         ),
         Divider(

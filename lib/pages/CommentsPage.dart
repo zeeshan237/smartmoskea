@@ -2,10 +2,8 @@ library timeago_flutter;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_moskea/pages/PhotoUpload.dart';
-import 'package:smart_moskea/widgets/header.dart';
 import 'package:smart_moskea/widgets/postWidget.dart';
 import 'package:smart_moskea/widgets/progress.dart';
 import 'package:timeago/timeago.dart' as tAgo;

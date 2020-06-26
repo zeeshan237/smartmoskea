@@ -1,11 +1,11 @@
 import "package:flutter/material.dart";
 
-class answered extends StatefulWidget {
+class Answered extends StatefulWidget {
   @override
-  _answeredState createState() => _answeredState();
+  _AnsweredState createState() => _AnsweredState();
 }
 
-class _answeredState extends State<answered> {
+class _AnsweredState extends State<Answered> {
   bool isPressed1 = false;
   bool isPressed2 = false;
   bool isPressed3 = false;
