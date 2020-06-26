@@ -19,7 +19,8 @@ class _AnsweredState extends State<Answered> {
       child: ListView(children: <Widget>[
         ListTile(
           leading: new CircleAvatar(
-            backgroundImage: NetworkImage("http://i.pravatar.cc/300"),
+            backgroundImage: NetworkImage(
+                "https://png.pngtree.com/element_our/png/20181206/users-vector-icon-png_260862.jpg"),
           ),
           title: new Text(
               "Muhammad Abullah Answered Your Question 'What is the difference between...'"),
@@ -42,7 +43,8 @@ class _AnsweredState extends State<Answered> {
         new Divider(height: 1.0),
         ListTile(
           leading: new CircleAvatar(
-            backgroundImage: NetworkImage("http://i.pravatar.cc/300"),
+            backgroundImage: NetworkImage(
+                "https://png.pngtree.com/element_our/png/20181206/users-vector-icon-png_260862.jpg"),
           ),
           title: new Text(
               "Muhammad Abullah Answered Your Question 'What is the difference between...'"),
@@ -65,7 +67,8 @@ class _AnsweredState extends State<Answered> {
         new Divider(height: 1.0),
         ListTile(
           leading: new CircleAvatar(
-            backgroundImage: NetworkImage("http://i.pravatar.cc/300"),
+            backgroundImage: NetworkImage(
+                "https://png.pngtree.com/element_our/png/20181206/users-vector-icon-png_260862.jpg"),
           ),
           title: new Text(
               "Muhammad Abullah Answered Your Question 'What is the difference between...'"),
@@ -88,7 +91,8 @@ class _AnsweredState extends State<Answered> {
         new Divider(height: 1.0),
         ListTile(
           leading: new CircleAvatar(
-            backgroundImage: NetworkImage("http://i.pravatar.cc/300"),
+            backgroundImage: NetworkImage(
+                "https://png.pngtree.com/element_our/png/20181206/users-vector-icon-png_260862.jpg"),
           ),
           title: new Text(
               "Muhammad Abullah Answered Your Question 'What is the difference between...'"),
@@ -111,7 +115,8 @@ class _AnsweredState extends State<Answered> {
         new Divider(height: 1.0),
         ListTile(
           leading: new CircleAvatar(
-            backgroundImage: NetworkImage("http://i.pravatar.cc/300"),
+            backgroundImage: NetworkImage(
+                "https://png.pngtree.com/element_our/png/20181206/users-vector-icon-png_260862.jpg"),
           ),
           title: new Text(
               "Muhammad Abullah Answered Your Question 'What is the difference between...'"),

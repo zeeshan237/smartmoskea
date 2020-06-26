@@ -36,38 +36,18 @@ class _ForumState extends State<Forum> {
       }
     });
   }
-  // Forum code from favortie icon End
 
-  //FirebaseUser user = await FirebaseAuth.instance.currentUser();
   int selectPage = 0;
-  final List<String> category = ["Forum", "My Questions", "Answered", "Likes"];
+  final List<String> category = ["Forum", "My Questions"];
 
-  //get current user
-  // FirebaseAuth _firebaseAuth;
-  // Future getCurrentUser() async {
-  //   FirebaseUser user = await FirebaseAuth.instance.currentUser();
-  //   return user;
-  // }
   User currentUser;
-  // Forum code from favortie icon Start
   String accountID = "";
-  // Forum code from favortie icon End
 
   Widget callPage(int index) {
     switch (index) {
       case 0:
         return HomeMsg(
             userProfileId: accountID, userCategory: currentOnlineUserCategory);
-      //  Navigator.push(context, MaterialPageRoute(builder: (context) {
-      //  return new UploadPhotoPage();
-      //  }));
-      // return HomeMsg(
-      //     //gCurrentUser:currentUser,
-      //     ); // Timeline Page   //Upload Page for using button here
-      // return messages(
-      //   'title',
-      //   userId: 'userId',
-      //   onSignedOut: () {},
       case 1:
         return YourQuestion(
           userProfileId: accountID,
@@ -100,7 +80,7 @@ class _ForumState extends State<Forum> {
               child: new Padding(
                 padding: EdgeInsets.symmetric(
                   vertical: 15.0,
-                  horizontal: 15.0,
+                  horizontal: 45.0,
                 ),
                 child: new Text(
                   category[index],

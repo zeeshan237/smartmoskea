@@ -6,6 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:smart_moskea/models/user.dart';
 import 'package:smart_moskea/pages/CommentsPage.dart';
+import 'package:smart_moskea/pages/CommentsPage1.dart';
+
 import 'package:smart_moskea/pages/PhotoUpload.dart';
 import 'package:smart_moskea/widgets/progress.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -22,6 +24,7 @@ class Post extends StatefulWidget {
   final String description;
   final dynamic likes;
   final int catogery;
+  DateTime timestamp;
 
   Post({
     this.postId,
@@ -32,6 +35,7 @@ class Post extends StatefulWidget {
     this.description,
     this.likes,
     this.catogery,
+    this.timestamp,
   });
 
   factory Post.fromDocument(DocumentSnapshot documentSnapshot) {
@@ -43,7 +47,8 @@ class Post extends StatefulWidget {
         email: documentSnapshot["email"],
         description: documentSnapshot["description"],
         likes: documentSnapshot["likes"],
-        catogery: documentSnapshot["catogery"]);
+        catogery: documentSnapshot["catogery"],
+        timestamp: documentSnapshot["timestamp"].toDate());
   }
 
   int getTotalNumberOfLikes(likes) {
@@ -71,6 +76,7 @@ class Post extends StatefulWidget {
         likes: this.likes,
         likeCount: getTotalNumberOfLikes(this.likes),
         catogery: this.catogery,
+        timestamp: this.timestamp,
       );
 }
 
@@ -87,6 +93,7 @@ class _PostState extends State<Post> {
   bool isLiked;
   bool showHeart = false;
   int catogery;
+  DateTime timestamp;
   //String currentOnlineUserId;
 
   _PostState({
@@ -99,6 +106,7 @@ class _PostState extends State<Post> {
     this.likes,
     this.likeCount,
     this.catogery,
+    this.timestamp,
   });
 
   updateDetails() {
@@ -107,6 +115,7 @@ class _PostState extends State<Post> {
 
   String currentOnlineUserId;
   int currentOnlineUserCategory;
+  String currentUserName;
   void initState() {
     super.initState();
     getUserId().then((value) {
@@ -117,6 +126,11 @@ class _PostState extends State<Post> {
     getUserCategory().then((value) {
       currentOnlineUserCategory = value;
       //updateDetails();
+    });
+
+    getUserName().then((value) {
+      currentUserName = value;
+      updateDetails();
     });
   }
 
@@ -136,21 +150,86 @@ class _PostState extends State<Post> {
             height: 10.0,
           ),
           createPostHead(),
-          // Divider(
-          //   // color: Colors.black,
-          //   height: 5.0,
-          // ),
-          // Divider(
-          //   // color: Colors.black,
-          //   height: 15.0,
-          // ),
           createPostFooter(),
-
           createPostPicture(),
           createPostFooterComentLike(),
         ],
       ),
     );
+  }
+
+// delete post code 26 june
+  handleDeletePost(BuildContext parentContext) {
+    return showDialog(
+      context: parentContext,
+      builder: (context) => SimpleDialog(
+        title: Text("Remove this post ?"),
+        children: <Widget>[
+          SimpleDialogOption(
+            onPressed: () {
+              Navigator.pop(context);
+              deletePost();
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      content: Text("Your Question is Deleted"),
+                    );
+                  });
+            },
+            child: Text(
+              'Delete',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+          SimpleDialogOption(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          )
+        ],
+      ),
+    );
+  }
+
+  // To delete a post, ownerId and currentUserId must be equal.
+  deletePost() async {
+    // delete post itself
+    postsReference
+        .document(ownerId)
+        .collection('usersPosts')
+        .document(postId)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+
+    // delete uploaded image from the post
+    storageReference.child('post_$postId.jpg').delete();
+
+    // delete all activity field notifications
+    QuerySnapshot activityFeedSnapshot = await activityFeedReference
+        .document(ownerId)
+        .collection('feedItems')
+        .where('postId', isEqualTo: postId)
+        .getDocuments();
+    activityFeedSnapshot.documents.forEach((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+
+    // delete all comments
+    QuerySnapshot commentsSnapshot = await commentsReference
+        .document(postId)
+        .collection('comments')
+        .getDocuments();
+    commentsSnapshot.documents.forEach((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
   }
 
   createPostHead() {
@@ -162,12 +241,12 @@ class _PostState extends State<Post> {
         }
         User user = User.fromDocument(dataSnapshot.data);
 
-        bool isPostOwner = user.id == ownerId || user.catogery == 2;
+        bool isPostOwner = user.id == ownerId || user.catogery == 3;
 
         return ListTile(
           leading: CircleAvatar(
-            backgroundImage:
-                CachedNetworkImageProvider("http://i.pravatar.cc/300"),
+            backgroundImage: CachedNetworkImageProvider(
+                "https://png.pngtree.com/element_our/png/20181206/users-vector-icon-png_260862.jpg"),
             backgroundColor: Colors.black,
           ),
           title: GestureDetector(
@@ -184,7 +263,7 @@ class _PostState extends State<Post> {
                     Icons.more_vert,
                     color: Colors.black,
                   ),
-                  onPressed: () => print("deleted"),
+                  onPressed: () => handleDeletePost(context),
                 )
               : Text(""),
         );
@@ -213,6 +292,7 @@ class _PostState extends State<Post> {
 
   addLike() async {
     final currentUserID = await getUserId();
+    // final currentUserName = await getUserName();
     bool isNotPostOwner = currentUserID != ownerId;
     if (isNotPostOwner) {
       activityFeedReference
@@ -223,9 +303,10 @@ class _PostState extends State<Post> {
         "type": "likes", //test change
         // "email": currentUser.email,
         "userId": currentUserID,
-        "timeStamp": timestamp,
+        "timestamp": DateTime.now(),
         // "url" : url,
         "postId": postId,
+        "username": currentUserName,
       });
     }
   }
@@ -452,6 +533,15 @@ class _PostState extends State<Post> {
                       ),
                     ),
                     Padding(padding: EdgeInsets.only(right: 15.0)),
+                    GestureDetector(
+                      onTap: () => displayComments1(context,
+                          postId: postId, ownerId: ownerId, url: url),
+                      child: Icon(
+                        Icons.chat_bubble_outline,
+                        size: 24.0,
+                        color: Colors.black,
+                      ),
+                    ),
                   ],
                 ),
                 Row(
@@ -525,6 +615,15 @@ class _PostState extends State<Post> {
                       ),
                     ),
                     Padding(padding: EdgeInsets.only(right: 15.0)),
+                    GestureDetector(
+                      onTap: () => displayComments1(context,
+                          postId: postId, ownerId: ownerId, url: url),
+                      child: Icon(
+                        Icons.chat_bubble_outline,
+                        size: 24.0,
+                        color: Colors.black,
+                      ),
+                    ),
                   ],
                 ),
                 Row(
@@ -571,10 +670,30 @@ class _PostState extends State<Post> {
     return ds.data['catogery'];
   }
 
+  //get user name
+  Future<String> getUserName() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    DocumentSnapshot ds =
+        await Firestore.instance.collection('users').document(user.uid).get();
+    // print('my uid' + user.uid);
+    // print('my name' + ds.data['name']);
+    // print('my email' + user.email);
+
+    return ds.data['name'];
+  }
+
   displayComments(BuildContext context,
       {String postId, String ownerId, String url}) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return CommentsPage(
+          postId: postId, postOwnerId: ownerId, postImageUrl: url);
+    }));
+  }
+
+  displayComments1(BuildContext context,
+      {String postId, String ownerId, String url}) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return CommentsPage1(
           postId: postId, postOwnerId: ownerId, postImageUrl: url);
     }));
   }
