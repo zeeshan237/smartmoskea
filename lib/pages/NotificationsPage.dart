@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:smart_moskea/pages/PhotoUpload.dart';
 import 'package:smart_moskea/pages/PostScreenPage.dart';
 import 'package:smart_moskea/pages/ProfilePage.dart';
-import 'package:smart_moskea/widgets/header.dart';
 import 'package:smart_moskea/widgets/progress.dart';
 import 'package:timeago/timeago.dart' as tAgo;
 

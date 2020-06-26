@@ -1,4 +1,3 @@
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class ChatMessage extends StatelessWidget {
@@ -40,7 +39,7 @@ class ChatMessage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(username, style: Theme.of(context).textTheme.subhead),
+                    Text(username, style: Theme.of(context).textTheme.subtitle1),
                     Container(
                       margin: const EdgeInsets.only(top: 5.0),
                       child: imageUrl == null

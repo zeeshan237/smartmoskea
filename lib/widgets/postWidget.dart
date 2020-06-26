@@ -1,26 +1,21 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:provider/provider.dart';
 import 'package:smart_moskea/models/user.dart';
 import 'package:smart_moskea/pages/CommentsPage.dart';
 import 'package:smart_moskea/pages/CommentsPage1.dart';
 
 import 'package:smart_moskea/pages/PhotoUpload.dart';
-import 'package:smart_moskea/pages/loggedInMainScreen.dart';
 import 'package:smart_moskea/widgets/progress.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:smart_moskea/widgets/CImageWidget.dart';
-import 'package:smart_moskea/pages/PhotoUpload.dart';
 
 final usersRef = Firestore.instance.collection('users');
 final DateTime timestamp = DateTime.now();
 
+// ignore: must_be_immutable
 class Post extends StatefulWidget {
   final String postId;
   final String ownerId;
@@ -126,12 +121,12 @@ class _PostState extends State<Post> {
     super.initState();
     getUserId().then((value) {
       currentOnlineUserId = value;
-      updateDetails();
+      //updateDetails();
     });
 
     getUserCategory().then((value) {
       currentOnlineUserCategory = value;
-      updateDetails();
+      //updateDetails();
     });
 
     getUserName().then((value) {

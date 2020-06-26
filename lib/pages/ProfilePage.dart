@@ -17,12 +17,20 @@ class _ProfilePageState extends State<ProfilePage> {
   int countPost = 0;
   List<Post> postsList = [];
   String postOrientation = "list";
+  Future<bool> _future;
+
+  @override
+  void initState() {
+    super.initState();
+    _future = getAllProfilePosts();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // appBar: header(context, titleText: 'Profile'),
       body: FutureBuilder<bool>(
-          future: getAllProfilePosts(),
+          future: _future,
           builder: (context, snapshot) {
             if (!snapshot.hasData || !snapshot.data) return circularProgress();
 
@@ -102,8 +110,7 @@ class _ProfilePageState extends State<ProfilePage> {
     });
     countPost = postsList.length;
 
-    print("all users post count: $countPost");
-    print("list cleared");
+    print("Profile: all users post count: $countPost");
     return true;
   }
 

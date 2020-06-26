@@ -38,26 +38,29 @@ class _HomeMsg extends State<HomeMsg> {
 
   String postOrientation = "list";
   File file;
+  Future<bool> _future;
 
   updateDetails() {
     setState(() {});
   }
 
   int currentOnlineUserCategory;
-  _HomeMsg() {
+
+  @override
+  void initState() {
+    super.initState();
     getUserCategory().then((value) {
       this.currentOnlineUserCategory = value;
-      updateDetails();
     });
+    _future = getAllProfilePosts();
   }
 
   @override
   Widget build(BuildContext context) {
-    postsList.clear();
     if (currentOnlineUserCategory == 3) {
       return Scaffold(
         body: FutureBuilder<bool>(
-            future: getAllProfilePosts(),
+            future: _future,
             builder: (context, snapshot) {
               if (!snapshot.hasData || !snapshot.data)
                 return circularProgress();
@@ -77,11 +80,12 @@ class _HomeMsg extends State<HomeMsg> {
     } else {
       return Scaffold(
         body: FutureBuilder<bool>(
-            future: getAllProfilePosts(),
+            future: _future,
             builder: (context, snapshot) {
-              if (!snapshot.hasData || !snapshot.data)
-                return circularProgress();
+              //  print(postsList[0].timestamp);
 
+              if (snapshot.hasData == false || snapshot.data == false)
+                return circularProgress();
               return ListView(
                 children: <Widget>[
                   // buildProfileHeader(),
@@ -90,6 +94,7 @@ class _HomeMsg extends State<HomeMsg> {
                     height: 0.0,
                     color: black,
                   ),
+
                   displayProfilePost(),
                 ],
               );
@@ -99,11 +104,18 @@ class _HomeMsg extends State<HomeMsg> {
         floatingActionButton: FloatingActionButton(
             backgroundColor: Colors.deepOrangeAccent,
             child: Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return new UploadPhotoPage();
-              }));
-            }),
+            onPressed: () async {
+              bool rebuild = await Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => UploadPhotoPage()));
+              if (rebuild == true) _future = getAllProfilePosts();
+            }
+
+            // file == null ? takeImage(context) : displayUploadFormScreen(),
+            //this on pressed when called takeImage will be called success but
+            //after image taken it should be displayUploadFormScreen() called but its not working, check this small issue so i will also judge your expertise then we will discuss project details budget and document
+            //add question here.
+            // r u there?????
+            ),
       );
     }
   }
@@ -134,7 +146,6 @@ class _HomeMsg extends State<HomeMsg> {
 
   // HomeMsg (after calling Forum Page ) code 2 this one is working code
   Future<bool> getAllProfilePosts() async {
-    postsList.clear();
     QuerySnapshot querySnapshot =
         await Firestore.instance.collection("users").getDocuments();
 
@@ -157,8 +168,7 @@ class _HomeMsg extends State<HomeMsg> {
     });
     countPost = postsList.length;
 
-    print("all users post count: $countPost");
-    print("list cleared");
+    print("Home: all users post count: $countPost");
     return true;
   }
 
@@ -249,9 +259,9 @@ class _HomeMsg extends State<HomeMsg> {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     DocumentSnapshot ds =
         await Firestore.instance.collection('users').document(user.uid).get();
-    //print('my uid' + user.uid);
-    //print('my name' + ds.data['name']);
-    //print('my email' + user.email);
+    // print('my uid' + user.uid);
+    // print('my name' + ds.data['name']);
+    // print('my email' + user.email);
 
     return ds.data['catogery'];
   }

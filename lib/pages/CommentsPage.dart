@@ -2,10 +2,8 @@ library timeago_flutter;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_moskea/pages/PhotoUpload.dart';
-import 'package:smart_moskea/widgets/header.dart';
 import 'package:smart_moskea/widgets/postWidget.dart';
 import 'package:smart_moskea/widgets/progress.dart';
 import 'package:timeago/timeago.dart' as tAgo;
@@ -112,9 +110,9 @@ class CommentsPageState extends State<CommentsPage> {
   Future<String> getUserId() async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
 
-    print('my uid' + user.uid);
+    // print('my uid' + user.uid);
 
-    print('my email' + user.email);
+    // print('my email' + user.email);
 
     return user.uid;
   }
@@ -125,9 +123,9 @@ class CommentsPageState extends State<CommentsPage> {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     DocumentSnapshot ds =
         await Firestore.instance.collection('users').document(user.uid).get();
-    print('my uid' + user.uid);
-    print('my name' + ds.data['name']);
-    print('my email' + user.email);
+    // print('my uid' + user.uid);
+    // print('my name' + ds.data['name']);
+    // print('my email' + user.email);
 
     return ds.data['name'];
   }

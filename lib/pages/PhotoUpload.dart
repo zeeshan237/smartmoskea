@@ -27,6 +27,7 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
   String postId = Uuid().v4();
   TextEditingController descriptionTextEditingController =
       TextEditingController();
+  // ignore: unused_field
   String _myValue;
   final formKey = new GlobalKey<FormState>();
   String accountEmail = "";
@@ -145,7 +146,7 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
       setState(() {
         uploading1 = false;
         postId = Uuid().v4();
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(true);
         showDialog(
             context: context,
             builder: (context) {
@@ -183,7 +184,7 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
         sampleImage = null;
         uploading = false;
         postId = Uuid().v4();
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(true);
         showDialog(
             context: context,
             builder: (context) {
@@ -303,108 +304,112 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
 
 // testing enable upload 2
   Widget enableUpload2() {
-    return new Container(
-        child: new Form(
-      key: formKey,
-      child: Column(
-        children: <Widget>[
-          uploading ? linearProgress() : Text(""),
-          SizedBox(
-            height: 15.0,
-            //width: 250.0,
-          ),
-          TextFormField(
-            controller: descriptionTextEditingController,
-            decoration: new InputDecoration(labelText: 'Description'),
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Please Enter Description';
-              }
-              return null;
-            },
-            onSaved: (value) {
-              return _myValue = value;
-            },
-          ),
-          SizedBox(
-            height: 15.0,
-          ),
-          RaisedButton(
-            elevation: 10.0,
-            child: Text("Add a New Post"),
-            textColor: Colors.white,
-            color: Colors.pink,
-            onPressed: uploading ? null : () => controlUploadAndSave1(),
+    return SingleChildScrollView(
+      child: Container(
+          child: new Form(
+        key: formKey,
+        child: Column(
+          children: <Widget>[
+            uploading ? linearProgress() : Text(""),
+            SizedBox(
+              height: 15.0,
+              //width: 250.0,
+            ),
+            TextFormField(
+              controller: descriptionTextEditingController,
+              decoration: new InputDecoration(labelText: 'Description'),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please Enter Description';
+                }
+                return null;
+              },
+              onSaved: (value) {
+                return _myValue = value;
+              },
+            ),
+            SizedBox(
+              height: 15.0,
+            ),
+            RaisedButton(
+              elevation: 10.0,
+              child: Text("Add a New Post"),
+              textColor: Colors.white,
+              color: Colors.pink,
+              onPressed: uploading ? null : () => controlUploadAndSave1(),
 
-            // { validateAndSave;
+              // { validateAndSave;
 
-            // }
-          )
-        ],
-      ),
-    ));
+              // }
+            )
+          ],
+        ),
+      )),
+    );
   }
 
   Widget enableUpload() {
-    return new Container(
-        child: new Form(
-      key: formKey,
-      child: Column(
-        children: <Widget>[
-          uploading ? linearProgress() : Text(""),
-          Container(
-            height: 230.0,
-            width: MediaQuery.of(context).size.width * 0.8,
-            child: Center(
-              child: AspectRatio(
-                aspectRatio: 16 / 9,
-                child: Container(
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                    image: FileImage(sampleImage),
-                    fit: BoxFit.cover,
-                  )),
+    return SingleChildScrollView(
+      child: Container(
+          child: new Form(
+        key: formKey,
+        child: Column(
+          children: <Widget>[
+            uploading ? linearProgress() : Text(""),
+            Container(
+              height: 230.0,
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: Center(
+                child: AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                      image: FileImage(sampleImage),
+                      fit: BoxFit.cover,
+                    )),
+                  ),
                 ),
               ),
             ),
-          ),
-          // Image.file(
-          //   sampleImage,
-          //   height: 25.0,
-          //   width: 20.0,
-          // ),
-          SizedBox(
-            height: 15.0,
-          ),
-          TextFormField(
-            controller: descriptionTextEditingController,
-            decoration: new InputDecoration(labelText: 'Description'),
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Please Enter Description';
-              }
-              return null;
-            },
-            onSaved: (value) {
-              return _myValue = value;
-            },
-          ),
-          SizedBox(
-            height: 15.0,
-          ),
-          RaisedButton(
-            elevation: 10.0,
-            child: Text("Add a New Post"),
-            textColor: Colors.white,
-            color: Colors.pink,
-            onPressed:
-                // { validateAndSave;
-                uploading ? null : () => controlUploadAndSave(),
-            // }
-          )
-        ],
-      ),
-    ));
+            // Image.file(
+            //   sampleImage,
+            //   height: 25.0,
+            //   width: 20.0,
+            // ),
+            SizedBox(
+              height: 15.0,
+            ),
+            TextFormField(
+              controller: descriptionTextEditingController,
+              decoration: new InputDecoration(labelText: 'Description'),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please Enter Description';
+                }
+                return null;
+              },
+              onSaved: (value) {
+                return _myValue = value;
+              },
+            ),
+            SizedBox(
+              height: 15.0,
+            ),
+            RaisedButton(
+              elevation: 10.0,
+              child: Text("Add a New Post"),
+              textColor: Colors.white,
+              color: Colors.pink,
+              onPressed:
+                  // { validateAndSave;
+                  uploading ? null : () => controlUploadAndSave(),
+              // }
+            )
+          ],
+        ),
+      )),
+    );
   }
 
   bool showUpload = false;

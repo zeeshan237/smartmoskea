@@ -1,20 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:smart_moskea/models/user.dart';
-import 'package:smart_moskea/pages/NotificationsPage.dart';
-
 import 'package:smart_moskea/pages/ProfilePage.dart';
 import 'package:smart_moskea/pages/userProfile.dart';
 import 'package:smart_moskea/requests/authServices.dart';
-
-import '../ui/login_page.dart';
+import 'NotificationsPage.dart';
 import 'qibla_direction.dart';
 import 'map.dart';
-import 'package:smart_moskea/ui/login_page.dart';
-import 'BeforeLoggedInMainScreen.dart';
-import 'package:smart_moskea/pages/notification.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:smart_moskea/pages/favorite.dart';
 import 'package:smart_moskea/pages/forum.dart';
 import 'package:flutter/material.dart';
 
@@ -38,6 +30,7 @@ class LoggedInMainScreen extends StatefulWidget {
 
 class _LoggedInMainScreenState extends State<LoggedInMainScreen> {
   FirebaseAuth auth;
+  // ignore: unused_field
   int _counter = 0;
   int _current = 2;
   //User userr;
@@ -71,7 +64,7 @@ class _LoggedInMainScreenState extends State<LoggedInMainScreen> {
   Widget callPage(int index) {
     switch (index) {
       case 0:
-        return forum();
+        return Forum();
       case 1:
         return qibla_direction();
       case 2:
@@ -84,11 +77,13 @@ class _LoggedInMainScreenState extends State<LoggedInMainScreen> {
       case 4:
         return App();
     }
+    return null;
   }
 
   String accountEmail = "";
   String accountName = "";
   String accountID = "";
+  // ignore: unused_element
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has

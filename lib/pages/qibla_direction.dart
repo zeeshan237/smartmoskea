@@ -7,11 +7,13 @@ import 'package:smart_moskea/qibla_files/qibla_compass.dart';
 
 
 
+// ignore: camel_case_types
 class qibla_direction extends StatefulWidget {
   @override
   _qibla_directionState createState() => _qibla_directionState();
 }
 
+// ignore: camel_case_types
 class _qibla_directionState extends State<qibla_direction> {
 
   final _deviceSupport = FlutterQiblah.androidDeviceSensorSupport();

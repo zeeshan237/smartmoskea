@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:volume/volume.dart';
 
-class manualSilent extends StatefulWidget {
+class ManualSilent extends StatefulWidget {
   @override
-  _manual_SilentState createState() => _manual_SilentState();
+  _Manual_SilentState createState() => _Manual_SilentState();
 }
 
-class _manual_SilentState extends State<manualSilent> {
+// ignore: camel_case_types
+class _Manual_SilentState extends State<ManualSilent> {
   AudioManager audioManager;
   int maxVol, currentVol;
   bool checkBoxValue = true;

@@ -1,12 +1,14 @@
 import "package:flutter/material.dart";
 
 
+// ignore: camel_case_types
 class like_questions extends StatefulWidget {
  @override
 _like_questionsState createState
   () => _like_questionsState();
 }
 
+// ignore: camel_case_types
 class _like_questionsState extends State<like_questions> {
   @override
   Widget build(BuildContext context) {
