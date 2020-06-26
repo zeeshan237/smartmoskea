@@ -253,7 +253,7 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
       "url": url,
       "email": accountEmail,
       "description": description,
-      "timestamp": timestamp,
+      "timestamp": DateTime.now(),
       "likes": {},
     });
   }
@@ -272,7 +272,7 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
       "url": url,
       "email": accountEmail,
       "description": description,
-      "timestamp": timestamp,
+      "timestamp": DateTime.now(),
       "likes": {},
     });
   }

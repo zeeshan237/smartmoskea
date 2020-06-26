@@ -148,7 +148,7 @@ class _YourQuestion extends State<YourQuestion> {
     }
   }
 
-  // // gora code 2 this one is working code just ascending order is issue
+  // // g code 2 this one is working code just ascending order is issue
   // Future<bool> getAllProfilePosts() async {
   //   QuerySnapshot querySnapshot =
   //       await Firestore.instance.collection("users").getDocuments();

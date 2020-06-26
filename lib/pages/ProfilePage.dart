@@ -25,34 +25,6 @@ class _ProfilePageState extends State<ProfilePage> {
           future: getAllProfilePosts(),
           builder: (context, snapshot) {
             if (!snapshot.hasData || !snapshot.data) return circularProgress();
-            // if (postsList.isEmpty) {
-            //   print("List Empty hai");
-            //   return Container(
-            //     child: Column(
-            //       mainAxisAlignment: MainAxisAlignment.center,
-            //       children: <Widget>[
-            //         Padding(
-            //           padding: EdgeInsets.all(30.0),
-            //           child: Icon(
-            //             Icons.photo_library,
-            //             color: Colors.grey,
-            //             size: 200.0,
-            //           ),
-            //         ),
-            //         Padding(
-            //           padding: EdgeInsets.only(top: 20.0),
-            //           child: Text(
-            //             "No Posts",
-            //             style: TextStyle(
-            //                 color: Colors.black,
-            //                 fontSize: 40.0,
-            //                 fontWeight: FontWeight.bold),
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   );
-            // }
 
             return ListView(
               children: <Widget>[
@@ -62,12 +34,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   height: 10.0,
                 ),
                 displayProfilePost(),
-                // Divider(),
-                // buildTogglePostOrientation(),
-                // Divider(
-                //   height: 0.0,
-                // ),
-                //  buildProfilePosts(),
               ],
             );
           }),
@@ -76,34 +42,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
 // display post from post widget to profile
   displayProfilePost() {
-    // if (postsList.isEmpty) {
-    //   print("List Empty hai");
-    //   return Container(
-    //     child: Column(
-    //       mainAxisAlignment: MainAxisAlignment.center,
-    //       children: <Widget>[
-    //         Padding(
-    //           padding: EdgeInsets.all(30.0),
-    //           child: Icon(
-    //             Icons.photo_library,
-    //             color: Colors.grey,
-    //             size: 200.0,
-    //           ),
-    //         ),
-    //         Padding(
-    //           padding: EdgeInsets.only(top: 20.0),
-    //           child: Text(
-    //             "No Posts",
-    //             style: TextStyle(
-    //                 color: Colors.black,
-    //                 fontSize: 40.0,
-    //                 fontWeight: FontWeight.bold),
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   );
-    // } else
     if (postOrientation == "list") {
       return Column(
         children: postsList,
@@ -140,11 +78,11 @@ class _ProfilePageState extends State<ProfilePage> {
   //   return true;
   // }
 
-// gora code 2 this one is working code just ascending order is issue
+// ProfilePage (Heart Icon) code 2 this one is working code
   Future<bool> getAllProfilePosts() async {
     QuerySnapshot querySnapshot =
         await Firestore.instance.collection("users").getDocuments();
-    postsList.clear();
+
     for (DocumentSnapshot documentSnapshot in querySnapshot.documents) {
       QuerySnapshot userPosts = await postsReference
           .document(documentSnapshot.documentID)
@@ -155,9 +93,17 @@ class _ProfilePageState extends State<ProfilePage> {
       postsList.addAll(userPosts.documents
           .map((documentSnapshot) => Post.fromDocument(documentSnapshot)));
     }
+    postsList.sort((a, b) {
+      DateTime one = a.timestamp;
+      DateTime two = b.timestamp;
+      int val = two.compareTo(one);
+
+      return val;
+    });
     countPost = postsList.length;
 
     print("all users post count: $countPost");
+    print("list cleared");
     return true;
   }
 
@@ -184,7 +130,7 @@ class _ProfilePageState extends State<ProfilePage> {
   //   print("all users post count: $countPost");
   //   return true;
   // }
-//gora code
+//g code
 
   // Future<bool> getAllProfilePosts() async {
   //   if (postsList.isNotEmpty) return true;

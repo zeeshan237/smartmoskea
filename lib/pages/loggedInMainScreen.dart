@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:smart_moskea/models/user.dart';
+import 'package:smart_moskea/pages/NotificationsPage.dart';
+
 import 'package:smart_moskea/pages/ProfilePage.dart';
 import 'package:smart_moskea/pages/userProfile.dart';
 import 'package:smart_moskea/requests/authServices.dart';
@@ -140,8 +142,8 @@ class _LoggedInMainScreenState extends State<LoggedInMainScreen> {
                 color: Colors.white,
               ),
               onPressed: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => notification()));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => NotificationsPage()));
               },
             ),
           ],
@@ -154,7 +156,8 @@ class _LoggedInMainScreenState extends State<LoggedInMainScreen> {
                 accountEmail: new Text(accountEmail),
                 decoration: BoxDecoration(color: Colors.deepOrangeAccent),
                 currentAccountPicture: new CircleAvatar(
-                  backgroundImage: new NetworkImage("http://i.pravatar.cc/300"),
+                  backgroundImage: new NetworkImage(
+                      "https://png.pngtree.com/element_our/png/20181206/users-vector-icon-png_260862.jpg"),
                 ),
               ),
               new ListTile(

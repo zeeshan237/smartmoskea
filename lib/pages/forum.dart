@@ -3,14 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_moskea/models/user.dart';
 import 'package:smart_moskea/pages/HomeMsg.dart';
-import 'package:smart_moskea/pages/PhotoUpload.dart';
-import 'package:smart_moskea/pages/answered.dart';
-import 'package:smart_moskea/pages/like_questions.dart';
 import 'package:smart_moskea/pages/your_questions.dart';
 //import 'package:smart_moskea/pages/messages.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:smart_moskea/pages/PhotoUpload.dart';
 
 class forum extends StatefulWidget {
   @override
@@ -39,47 +34,26 @@ class _forumState extends State<forum> {
       }
     });
   }
-  // Forum code from favortie icon End
 
-  //FirebaseUser user = await FirebaseAuth.instance.currentUser();
   int selectPage = 0;
-  final List<String> category = ["Forum", "My Questions", "Answered", "Likes"];
+  final List<String> category = ["Forum", "My Questions"];
 
-  //get current user
-  // FirebaseAuth _firebaseAuth;
-  // Future getCurrentUser() async {
-  //   FirebaseUser user = await FirebaseAuth.instance.currentUser();
-  //   return user;
-  // }
   User currentUser;
-  // Forum code from favortie icon Start
   String accountID = "";
-  // Forum code from favortie icon End
 
   Widget callPage(int index) {
     switch (index) {
       case 0:
         return HomeMsg(
             userProfileId: accountID, userCategory: currentOnlineUserCategory);
-      //  Navigator.push(context, MaterialPageRoute(builder: (context) {
-      //  return new UploadPhotoPage();
-      //  }));
-      // return HomeMsg(
-      //     //gCurrentUser:currentUser,
-      //     ); // Timeline Page   //Upload Page for using button here
-      // return messages(
-      //   'title',
-      //   userId: 'userId',
-      //   onSignedOut: () {},
       case 1:
         return YourQuestion(
           userProfileId: accountID,
         );
-
-      case 2:
-        return answered();
-      case 3:
-        return like_questions();
+      // case 2:
+      //   return answered();
+      // case 3:
+      //   return like_questions();
     }
   }
 
@@ -102,7 +76,7 @@ class _forumState extends State<forum> {
               child: new Padding(
                 padding: EdgeInsets.symmetric(
                   vertical: 15.0,
-                  horizontal: 15.0,
+                  horizontal: 45.0,
                 ),
                 child: new Text(
                   category[index],
@@ -138,8 +112,8 @@ class _forumState extends State<forum> {
 
   Future<String> userCurrentID() async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    print('you are' + user.uid);
-    print('your email' + user.email);
+    // print('you are' + user.uid);
+    //print('your email' + user.email);
 
     //uuuser.get;
     //final String email = user.uid.toString();
@@ -152,9 +126,9 @@ class _forumState extends State<forum> {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     DocumentSnapshot ds =
         await Firestore.instance.collection('users').document(user.uid).get();
-    print('my uid' + user.uid);
-    print('my name' + ds.data['name']);
-    print('my email' + user.email);
+    // print('my uid' + user.uid);
+    //print('my name' + ds.data['name']);
+    //print('my email' + user.email);
 
     return ds.data['catogery'];
   }
