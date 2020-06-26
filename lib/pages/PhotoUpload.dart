@@ -146,7 +146,7 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
       setState(() {
         uploading1 = false;
         postId = Uuid().v4();
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(true);
         showDialog(
             context: context,
             builder: (context) {
@@ -184,7 +184,7 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
         sampleImage = null;
         uploading = false;
         postId = Uuid().v4();
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(true);
         showDialog(
             context: context,
             builder: (context) {

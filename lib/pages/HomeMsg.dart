@@ -52,7 +52,7 @@ class _HomeMsg extends State<HomeMsg> {
     getUserCategory().then((value) {
       this.currentOnlineUserCategory = value;
     });
-    _future=getAllProfilePosts();
+    _future = getAllProfilePosts();
   }
 
   @override
@@ -99,9 +99,8 @@ class _HomeMsg extends State<HomeMsg> {
             builder: (context, snapshot) {
               //  print(postsList[0].timestamp);
 
-              if (!snapshot.hasData || !snapshot.data)
+              if (snapshot.hasData==false || snapshot.data==false)
                 return circularProgress();
-
               return ListView(
                 children: <Widget>[
                   // buildProfileHeader(),
@@ -110,6 +109,7 @@ class _HomeMsg extends State<HomeMsg> {
                     height: 0.0,
                     color: black,
                   ),
+                  
                   displayProfilePost(),
                   // Divider(),
                   // buildTogglePostOrientation(),
@@ -125,10 +125,10 @@ class _HomeMsg extends State<HomeMsg> {
         floatingActionButton: FloatingActionButton(
             backgroundColor: Colors.deepOrangeAccent,
             child: Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return new UploadPhotoPage();
-              }));
+            onPressed: () async {
+              bool rebuild = await Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => UploadPhotoPage()));
+              if(rebuild==true) _future=getAllProfilePosts();
             }
 
             // file == null ? takeImage(context) : displayUploadFormScreen(),
@@ -195,7 +195,8 @@ class _HomeMsg extends State<HomeMsg> {
 
   // gora code 2 this one is working code just ascending order is issue
   Future<bool> getAllProfilePosts() async {
-    QuerySnapshot querySnapshot = await Firestore.instance.collection("users").getDocuments();
+    QuerySnapshot querySnapshot =
+        await Firestore.instance.collection("users").getDocuments();
     postsList.clear();
     for (DocumentSnapshot documentSnapshot in querySnapshot.documents) {
       QuerySnapshot userPosts = await postsReference
